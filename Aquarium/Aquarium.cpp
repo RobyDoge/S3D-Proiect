@@ -1,6 +1,6 @@
 ﻿//Added by Us:
 #include "Camera.h"
-
+#include "Shader.h"
 
 #include <glew.h>
 
@@ -19,6 +19,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+
 #pragma comment (lib, "glfw3dll.lib")
 #pragma comment (lib, "glew32.lib")
 #pragma comment (lib, "OpenGL32.lib")
@@ -30,140 +31,7 @@ const unsigned int SCR_HEIGHT = 786;
 //added by me
 float circleRadius = 2.f;
 
-
-class Shader
-{
-public:
-    // constructor generates the shaderStencilTesting on the fly
-    // ------------------------------------------------------------------------
-    Shader(const char* vertexPath, const char* fragmentPath)
-    {
-        Init(vertexPath, fragmentPath);
-    }
-
-    ~Shader()
-    {
-        glDeleteProgram(ID);
-    }
-
-    // activate the shaderStencilTesting
-    // ------------------------------------------------------------------------
-    void Use() const
-    {
-        glUseProgram(ID);
-    }
-
-    unsigned int GetID() const { return ID; }
-
-    // MVP
-    unsigned int loc_model_matrix;
-    unsigned int loc_view_matrix;
-    unsigned int loc_projection_matrix;
-
-    // utility uniform functions
-    void SetInt(const std::string& name, int value) const
-    {
-        glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
-    }
-    void SetFloat(const std::string& name, float value) const
-    {
-        glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
-    }
-    void SetVec3(const std::string& name, const glm::vec3& value) const
-    {
-        glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
-    }
-    void SetVec3(const std::string& name, float x, float y, float z) const
-    {
-        glUniform3f(glGetUniformLocation(ID, name.c_str()), x, y, z);
-    }
-    void SetMat4(const std::string& name, const glm::mat4& mat) const
-    {
-        glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
-    }
-
-private:
-    void Init(const char* vertexPath, const char* fragmentPath)
-    {
-        // 1. retrieve the vertex/fragment source code from filePath
-        std::string vertexCode;
-        std::string fragmentCode;
-        std::ifstream vShaderFile;
-        std::ifstream fShaderFile;
-        // ensure ifstream objects can throw exceptions:
-        vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-        fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-        try {
-            // open files
-            vShaderFile.open(vertexPath);
-            fShaderFile.open(fragmentPath);
-            std::stringstream vShaderStream, fShaderStream;
-            // read file's buffer contents into streams
-            vShaderStream << vShaderFile.rdbuf();
-            fShaderStream << fShaderFile.rdbuf();
-            // close file handlers
-            vShaderFile.close();
-            fShaderFile.close();
-            // convert stream into string
-            vertexCode = vShaderStream.str();
-            fragmentCode = fShaderStream.str();
-        }
-        catch (std::ifstream::failure e) {
-            std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
-        }
-        const char* vShaderCode = vertexCode.c_str();
-        const char* fShaderCode = fragmentCode.c_str();
-
-        // 2. compile shaders
-        unsigned int vertex, fragment;
-        // vertex shaderStencilTesting
-        vertex = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertex, 1, &vShaderCode, NULL);
-        glCompileShader(vertex);
-        CheckCompileErrors(vertex, "VERTEX");
-        // fragment Shader
-        fragment = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragment, 1, &fShaderCode, NULL);
-        glCompileShader(fragment);
-        CheckCompileErrors(fragment, "FRAGMENT");
-        // shaderStencilTesting Program
-        ID = glCreateProgram();
-        glAttachShader(ID, vertex);
-        glAttachShader(ID, fragment);
-        glLinkProgram(ID);
-        CheckCompileErrors(ID, "PROGRAM");
-
-        // 3. delete the shaders as they're linked into our program now and no longer necessery
-        glDeleteShader(vertex);
-        glDeleteShader(fragment);
-    }
-
-    // utility function for checking shaderStencilTesting compilation/linking errors.
-    // ------------------------------------------------------------------------
-    void CheckCompileErrors(unsigned int shaderStencilTesting, std::string type)
-    {
-        GLint success;
-        GLchar infoLog[1024];
-        if (type != "PROGRAM") {
-            glGetShaderiv(shaderStencilTesting, GL_COMPILE_STATUS, &success);
-            if (!success) {
-                glGetShaderInfoLog(shaderStencilTesting, 1024, NULL, infoLog);
-                std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
-            }
-        }
-        else {
-            glGetProgramiv(shaderStencilTesting, GL_LINK_STATUS, &success);
-            if (!success) {
-                glGetProgramInfoLog(shaderStencilTesting, 1024, NULL, infoLog);
-                std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
-            }
-        }
-    }
-private:
-    unsigned int ID;
-};
-
-Camera* pCamera = nullptr;
+Camera* camera = nullptr;
 
 unsigned int CreateTexture(const std::string& strTexturePath)
 {
@@ -198,9 +66,6 @@ unsigned int CreateTexture(const std::string& strTexturePath)
         std::cout << "Failed to load texture: " << strTexturePath << std::endl;
     }
     stbi_image_free(data);
-
-    
-
     return textureId;
 }
 
@@ -252,7 +117,7 @@ int main(int argc, char** argv)
     glewInit();
 
     // Create camera
-    pCamera = new Camera(SCR_WIDTH, SCR_HEIGHT, glm::vec3(0.0, 1.0, 3.0));
+    camera = new Camera(SCR_WIDTH, SCR_HEIGHT, glm::vec3(0.0, 1.0, 3.0));
 
     // configure global opengl state
     // -----------------------------
@@ -320,7 +185,7 @@ int main(int argc, char** argv)
         
         float lightX = circleRadius * cos(glm::radians(angle));
         float lightZ = circleRadius * sin(glm::radians(angle));
-        glm::vec3 lightPos(lightX, 4.f, lightZ);
+        glm::vec3 lightPos(lightX, 0.f, lightZ);
         if(isRotating)
         {
             angle += lightSpeed * deltaTime;
@@ -341,7 +206,7 @@ int main(int argc, char** argv)
         glm::mat4 lightSpaceMatrix;
         float near_plane = 1.0f, far_plane = 7.5f;
         lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-        lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+        lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 0.0, 0.0));
         lightSpaceMatrix = lightProjection * lightView;
 
         // render scene from light's point of view
@@ -367,12 +232,12 @@ int main(int argc, char** argv)
         glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         shadowMappingShader.Use();
-        glm::mat4 projection = pCamera->GetProjectionMatrix();
-        glm::mat4 view = pCamera->GetViewMatrix();
+        glm::mat4 projection = camera->GetProjectionMatrix();
+        glm::mat4 view = camera->GetViewMatrix();
         shadowMappingShader.SetMat4("projection", projection);
         shadowMappingShader.SetMat4("view", view);
         // set light uniforms
-        shadowMappingShader.SetVec3("viewPos", pCamera->GetPosition());
+        shadowMappingShader.SetVec3("viewPos", camera->GetPosition());
         shadowMappingShader.SetVec3("lightPos", lightPos);
         shadowMappingShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
         glActiveTexture(GL_TEXTURE0);
@@ -388,7 +253,7 @@ int main(int argc, char** argv)
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:
-    delete pCamera;
+    delete camera;
 
     glfwTerminate();
     return 0;
@@ -545,22 +410,22 @@ void processInput(GLFWwindow* window)
         glfwSetWindowShouldClose(window, true);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        pCamera->ProcessKeyboard(Camera::Forward , (float)deltaTime);
+        camera->ProcessKeyboard(Camera::Forward , (float)deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        pCamera->ProcessKeyboard(Camera::Backward, (float)deltaTime);
+        camera->ProcessKeyboard(Camera::Backward, (float)deltaTime);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        pCamera->ProcessKeyboard(Camera::Left, (float)deltaTime);
+        camera->ProcessKeyboard(Camera::Left, (float)deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        pCamera->ProcessKeyboard(Camera::Right, (float)deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-        pCamera->ProcessKeyboard(Camera::Up, (float)deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-        pCamera->ProcessKeyboard(Camera::Down, (float)deltaTime);
+        camera->ProcessKeyboard(Camera::Right, (float)deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        camera->ProcessKeyboard(Camera::Up, (float)deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        camera->ProcessKeyboard(Camera::Down, (float)deltaTime);
 
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
         int width, height;
         glfwGetWindowSize(window, &width, &height);
-        pCamera->Reset(width, height);
+        camera->Reset(width, height);
     }
 
     if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
@@ -580,15 +445,15 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
-    pCamera->Reshape(width, height);
+    camera->Reshape(width, height);
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    pCamera->MouseControl((float)xpos, (float)ypos);
+    camera->MouseControl((float)xpos, (float)ypos);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yOffset)
 {
-    pCamera->ProcessMouseScroll((float)yOffset);
+    camera->ProcessMouseScroll((float)yOffset);
 }
