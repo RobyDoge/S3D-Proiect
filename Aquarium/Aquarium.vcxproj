@@ -137,6 +137,8 @@
     <ClCompile Include="Aquarium.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Simulation.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ShadowMapping.fs">
@@ -155,6 +157,8 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Simulation.h" />
+    <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

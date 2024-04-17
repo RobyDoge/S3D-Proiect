@@ -31,6 +31,8 @@ public:
 	void ProcessKeyboard(MovementType direction, float deltaTime);
 	void MouseControl(float xPos, float yPos);
 	void ProcessMouseScroll(float yOffset);
+	~Camera() = default;
+
 
 private:
 	void ProcessMouseMovement(float xOffset, float yOffset, bool constrainPitch = true);
