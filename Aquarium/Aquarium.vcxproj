@@ -153,9 +153,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Images\Thomas.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Shader.h" />
   </ItemGroup>

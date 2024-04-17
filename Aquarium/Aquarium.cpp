@@ -77,6 +77,7 @@ void processInput(GLFWwindow* window);
 void renderScene(const Shader& shader);
 void renderCube();
 void renderFloor();
+void renderCeiling();
 
 // timing
 double deltaTime = 0.0f;	// time between current frame and last frame
@@ -130,7 +131,8 @@ int main(int argc, char** argv)
 
     // load textures
     // -------------
-    unsigned int floorTexture = CreateTexture(strExePath + "\\..\\..\\Images\\Thomas.jpg");
+    unsigned int floorTexture = CreateTexture(strExePath + "\\..\\..\\Images\\Floor.jpg");
+
 
     // configure depth map FBO
     // -----------------------
@@ -258,6 +260,51 @@ int main(int argc, char** argv)
     glfwTerminate();
     return 0;
 }
+unsigned int ceilingVAO = 0;
+
+
+void renderCeiling() {
+   
+    if (ceilingVAO == 0) {
+
+        float ceilingVertices[] = {
+            // Pozitii           // Normale         // Coordonate textură
+             5.0f,  5.0f,  5.0f,  0.0f,  1.0f,  0.0f,  5.0f,  0.0f, // Dreapta-sus
+            -5.0f,  5.0f,  5.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f, // Stânga-sus
+            -5.0f,  5.0f, -5.0f,  0.0f,  1.0f,  0.0f,  0.0f,  5.0f, // Stânga-jos
+             5.0f,  5.0f,  5.0f,  0.0f,  1.0f,  0.0f,  5.0f,  0.0f, // Dreapta-sus
+            -5.0f,  5.0f, -5.0f,  0.0f,  1.0f,  0.0f,  0.0f,  5.0f, // Stânga-jos
+             5.0f,  5.0f, -5.0f,  0.0f,  1.0f,  0.0f,  5.0f,  5.0f  // Dreapta-jos
+        };
+
+
+
+        glGenVertexArrays(1, &ceilingVAO);
+        unsigned int ceilingVBO;
+        glGenBuffers(1, &ceilingVBO);
+
+ 
+        glBindVertexArray(ceilingVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, ceilingVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(ceilingVertices), ceilingVertices, GL_STATIC_DRAW);
+
+
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+
+
+        glBindVertexArray(0);
+    }
+
+    glBindVertexArray(ceilingVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+}
+
 
 // renders the 3D scene
 // --------------------
@@ -267,6 +314,12 @@ void renderScene(const Shader& shader)
     glm::mat4 model;
     shader.SetMat4("model", model);
     renderFloor();
+
+    //ceiling
+    glm::mat4 model1;
+    shader.SetMat4("model1", model1);
+    renderCeiling();
+
 
     // cube
     model = glm::mat4();
@@ -402,6 +455,7 @@ void renderCube()
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
 }
+
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 void processInput(GLFWwindow* window)
