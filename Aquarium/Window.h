@@ -1,36 +1,37 @@
 ﻿#pragma once
 #include <glfw3.h>
+#include "Camera.h"
 
-#include "Simulation.h"
+
 
 class Window
 {
 public:
-	Window(const int& screenWidth, const int& screenHeight);
+	Window(const int& screenWidth, const int& screenHeight, Camera* camera);
+	~Window();
 	auto ViewportDidResize(int w, int h) -> void;
 	auto RenderScene(void) -> void;
 	auto UpdateScene(double ms) -> void;
+	GLFWwindow* GetWindow();
 
 private:
-	inline static void FrameBuffer_Size_Callback(GLFWwindow* window, const int width, const int height)
+	inline static void FrameBuffer_Size_Callback(GLFWwindow* win, const int width, const int height)
 	{
-		const auto simulation = static_cast<Simulation*>(glfwGetWindowUserPointer(window));
-		const auto camera = simulation->GetCamera();
-		camera->Reshape(width, height);
+		const auto window = static_cast<Window*>(glfwGetWindowUserPointer(win));
+		window->m_camera->Reshape(width, height);
 	}
-	inline static void Mouse_Callback(GLFWwindow* window, const double xPos, const double yPos)
+	inline static void Mouse_Callback(GLFWwindow* win, const double xPos, const double yPos)
 	{
-		const auto simulation = static_cast<Simulation*>(glfwGetWindowUserPointer(window));
-		const auto camera = simulation->GetCamera();
-		camera->MouseControl(static_cast<float>(xPos), static_cast<float>(yPos));
+		const auto window = static_cast<Window*>(glfwGetWindowUserPointer(win));
+		window->m_camera->MouseControl(static_cast<float>(xPos), static_cast<float>(yPos));
 	}
-	inline static void Scroll_Callback(GLFWwindow* window, const double xOffset, const double yOffset)
+	inline static void Scroll_Callback(GLFWwindow* win, const double xOffset, const double yOffset)
 	{
-		const auto simulation = static_cast<Simulation*>(glfwGetWindowUserPointer(window));
-		const auto camera = simulation->GetCamera();
-		camera->ProcessMouseScroll(static_cast<float>(yOffset));
+		const auto window = static_cast<Window*>(glfwGetWindowUserPointer(win));
+		window->m_camera->ProcessMouseScroll(static_cast<float>(yOffset));
 	}
 
 private:
 	GLFWwindow* m_window;
+	Camera* m_camera;
 };

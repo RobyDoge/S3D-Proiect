@@ -1,8 +1,10 @@
 ﻿#include "Window.h"
 #include <stdexcept>
 
-Window::Window(const int& screenWidth,const int& screenHeight)
+Window::Window(const int& screenWidth,const int& screenHeight, Camera* camera)
 {
+	m_camera= camera;
+
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -26,10 +28,22 @@ Window::Window(const int& screenWidth,const int& screenHeight)
 
 
 }
+
+Window::~Window()
+{
+	delete m_camera;
+	glfwTerminate();
+}
+
 auto Window::ViewportDidResize(int w, int h) -> void
 {
     glViewport(0, 0, (GLsizei)w, (GLsizei)h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
+}
+
+GLFWwindow* Window::GetWindow()
+{
+	return m_window;
 }
