@@ -14,8 +14,8 @@ Simulation::Simulation(const string& fullExePath)
 	SetExeLocation(fullExePath);
 	m_camera = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT, glm::vec3(0.0, 1.0, 3.0));
 	InitializeWindow();
-	InitializeGLEW();
-    CreateShaders();
+	/*InitializeGLEW();
+    CreateShaders();*/
 
 }
 
@@ -88,7 +88,7 @@ void Simulation::Run()
         glBindTexture(GL_TEXTURE_2D, m_textures.at("floorTexture"));
         glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT);
-        RenderScene(m_shadowMappingDepthShader);
+        m_window->RenderScene(m_shadowMappingDepthShader);
         glCullFace(GL_BACK);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -100,12 +100,12 @@ void Simulation::Run()
         glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         m_shadowMappingShader.Use();
-        glm::mat4 projection = m_camera->GetProjectionMatrix();
-        glm::mat4 view = m_camera->GetViewMatrix();
+        glm::mat4 projection = m_window->GetCamera()->GetProjectionMatrix();
+        glm::mat4 view = m_window->GetCamera()->GetViewMatrix();
         m_shadowMappingShader.SetMat4("projection", projection);
         m_shadowMappingShader.SetMat4("view", view);
         // set light uniforms
-        m_shadowMappingShader.SetVec3("viewPos", m_camera->GetPosition());
+        m_shadowMappingShader.SetVec3("viewPos", m_window->GetCamera()->GetPosition());
         m_shadowMappingShader.SetVec3("lightPos", lightPos);
         m_shadowMappingShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
         glActiveTexture(GL_TEXTURE0);
@@ -113,7 +113,7 @@ void Simulation::Run()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, m_depthMap);
         glDisable(GL_CULL_FACE);
-        RenderScene(m_shadowMappingShader);
+        m_window->RenderScene(m_shadowMappingShader);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         glfwSwapBuffers(m_window->GetWindow());
@@ -173,9 +173,7 @@ void Simulation::CreateShaders()
 	m_shadowMappingShader = { "ShadowMapping.vs", "ShadowMapping.fs" };
 	m_shadowMappingDepthShader = {"ShadowMappingDepth.vs", "ShadowMappingDepth.fs"};
 
-    m_shadowMappingShader.Use();
-    m_shadowMappingShader.SetInt("diffuseTexture", 0);
-    m_shadowMappingShader.SetInt("shadowMap", 1);
+    
 }
 
 unsigned Simulation::CreateTexture(const string& texturePath)
@@ -187,13 +185,19 @@ unsigned Simulation::CreateTexture(const string& texturePath)
     stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
     unsigned char* data = stbi_load(texturePath.c_str(), &width, &height, &nrChannels, 0);
     if (!data) throw std::runtime_error(std::format("Failed to load texture: {}",texturePath));
-    GLenum format;
+    GLenum format = GL_RED;
     if (nrChannels == 1)
 	    format = GL_RED;
     else if (nrChannels == 3)
 	    format = GL_RGB;
     else if (nrChannels == 4)
 	    format = GL_RGBA;
+
+
+    if (!data) {
+        std::cerr << "Failed to load texture: " << texturePath << std::endl;
+        throw std::runtime_error("Failed to load texture");
+    }
 
     glGenTextures(1, &textureId);
     glBindTexture(GL_TEXTURE_2D, textureId);
@@ -240,6 +244,8 @@ void Simulation::ProcessInput()
 
 void Simulation::RenderScene(Shader shader)
 {
+    m_window->RenderScene(shader);
+    return;
         // floor
         glm::mat4 model;
         //shader.SetMat4("model", model);
@@ -343,4 +349,9 @@ void Simulation::RenderCube()
     glBindVertexArray(cubeVAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
+}
+
+GLFWwindow* Simulation::GetWindow()
+{
+	return m_window->GetWindow();
 }

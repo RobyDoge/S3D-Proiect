@@ -503,11 +503,131 @@
 //}
 
 
+#include <glew.h>
+
 #include "Simulation.h"
+#pragma comment (lib, "glfw3dll.lib")
+#pragma comment (lib, "glew32.lib")
+#pragma comment (lib, "OpenGL32.lib")
 
 int main(int argc, char** argv)
 {
 	auto simulation = Simulation(argv[0]);
+
+
+	glewInit();
+	glEnable(GL_DEPTH_TEST);
+
+	simulation.CreateShaders();
 	simulation.AddTexture("floorTexture", "\\..\\..\\Images\\Floor.jpg");
-	simulation.Run();
-}
+
+	glGenFramebuffers(1, &simulation.m_depthMapFbo);
+	// create depth texture
+	glGenTextures(1, &simulation.m_depthMap);
+	glBindTexture(GL_TEXTURE_2D, simulation.m_depthMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, simulation.SHADOW_WIDTH, simulation.SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	constexpr float borderColor[] = { 0.0, 0.0, 0.0, 0.0 };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+	// attach depth texture as FBO's depth buffer
+	glBindFramebuffer(GL_FRAMEBUFFER, simulation.m_depthMapFbo);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, simulation.m_depthMap, 0);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+	// shader configuration
+	// --------------------
+	simulation.m_shadowMappingShader.Use();
+	simulation.m_shadowMappingShader.SetInt("diffuseTexture", 0);
+	simulation.m_shadowMappingShader.SetInt("shadowMap", 1);
+
+	// lighting info
+	// -------------
+	glEnable(GL_CULL_FACE);
+	
+
+
+		double lastFrame = 0.0f;
+
+	    // render loop
+	    // -----------
+	    while (!glfwWindowShouldClose(simulation.GetWindow()))
+	    {
+	        // per-frame time logic
+	        // --------------------
+	        float currentFrame = (float)glfwGetTime();
+	        simulation.m_deltaTime = currentFrame - lastFrame;
+	        lastFrame = currentFrame;
+	       
+			glm::vec3 lightPos(2, 0.f, 3);
+
+	        // input
+	        // -----
+	        simulation.ProcessInput();
+	
+	        // render
+	        // ------
+	        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	        // 1. render depth of scene to texture (from light's perspective)
+	        glm::mat4 lightProjection, lightView;
+	        glm::mat4 lightSpaceMatrix;
+	        float near_plane = 1.0f, far_plane = 7.5f;
+	        lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+	        lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 0.0, 0.0));
+	        lightSpaceMatrix = lightProjection * lightView;
+	
+	        // render scene from light's point of view
+	        simulation.m_shadowMappingDepthShader.Use();
+			simulation.m_shadowMappingDepthShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
+	
+	        glViewport(0, 0, simulation.SHADOW_WIDTH, simulation.SHADOW_HEIGHT);
+	        glBindFramebuffer(GL_FRAMEBUFFER, simulation.m_depthMapFbo);
+	        glClear(GL_DEPTH_BUFFER_BIT);
+	        glActiveTexture(GL_TEXTURE0);
+	        glBindTexture(GL_TEXTURE_2D, simulation.m_textures.at("floorTexture"));
+	        glEnable(GL_CULL_FACE);
+	        glCullFace(GL_FRONT);
+	        simulation.RenderScene(simulation.m_shadowMappingDepthShader);
+	        glCullFace(GL_BACK);
+	        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	
+	        // reset viewport
+	        glViewport(0, 0, simulation.SCREEN_WIDTH, simulation.SCREEN_HEIGHT);
+	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	        // 2. render scene as normal using the generated depth/shadow map 
+	        glViewport(0, 0, simulation.SCREEN_WIDTH, simulation.SCREEN_HEIGHT);
+	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			simulation.m_shadowMappingShader.Use();
+	        glm::mat4 projection = simulation.m_camera->GetProjectionMatrix();
+	        glm::mat4 view = simulation.m_camera->GetViewMatrix();
+			simulation.m_shadowMappingShader.SetMat4("projection", projection);
+			simulation.m_shadowMappingShader.SetMat4("view", view);
+	        // set light uniforms
+			simulation.m_shadowMappingShader.SetVec3("viewPos", simulation.m_camera->GetPosition());
+			simulation.m_shadowMappingShader.SetVec3("lightPos", lightPos);
+			simulation.m_shadowMappingShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
+	        glActiveTexture(GL_TEXTURE0);
+	        glBindTexture(GL_TEXTURE_2D, simulation.m_textures.at("floorTexture"));
+	        glActiveTexture(GL_TEXTURE1);
+	        glBindTexture(GL_TEXTURE_2D, simulation.m_depthMap);
+	        glDisable(GL_CULL_FACE);
+	        simulation.RenderScene(simulation.m_shadowMappingShader);
+	
+	        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+	        glfwSwapBuffers(simulation.GetWindow());
+	        glfwPollEvents();
+	    }
+	
+	
+	    glfwTerminate();
+	    return 0;
+	}

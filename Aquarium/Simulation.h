@@ -10,9 +10,7 @@
 #include <stdio.h>
 #include <unordered_map>
 
-#pragma comment (lib, "glfw3dll.lib")
-#pragma comment (lib, "glew32.lib")
-#pragma comment (lib, "OpenGL32.lib")
+
 
 using std::string;
 
@@ -26,7 +24,9 @@ public:
 	void AddTexture(const string& textureName, const string& texturePath);
 	void AddMultipleTextures(const std::unordered_map<string,string>& textureName_texturePath);
 	void Run();
-private:
+	GLFWwindow* GetWindow();
+
+public:
 	void SetExeLocation(const string& fullExePath);
 	void InitializeWindow();
 	void InitializeGLEW();
@@ -38,12 +38,12 @@ private:
 private:
 	
 
-private:
+public:
 	static constexpr int SCREEN_WIDTH = 1366;
 	static constexpr int SCREEN_HEIGHT = 768;
 	static constexpr unsigned int SHADOW_WIDTH = 1024;
 	static constexpr unsigned int SHADOW_HEIGHT = 1024;
-private:
+public:
 	Camera* m_camera;
 	Window* m_window;
 	string m_exeLocation;

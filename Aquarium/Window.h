@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <glfw3.h>
 #include "Camera.h"
-
+#include "Shader.h"
 
 
 class Window
@@ -10,10 +10,13 @@ public:
 	Window(const int& screenWidth, const int& screenHeight, Camera* camera);
 	~Window();
 	auto ViewportDidResize(int w, int h) -> void;
-	auto RenderScene(void) -> void;
+	auto RenderScene(Shader shader) -> void;
 	auto UpdateScene(double ms) -> void;
 	GLFWwindow* GetWindow();
+	Camera* GetCamera() const;
 
+private:
+	void RenderCube();
 private:
 	inline static void FrameBuffer_Size_Callback(GLFWwindow* win, const int width, const int height)
 	{
@@ -34,4 +37,6 @@ private:
 private:
 	GLFWwindow* m_window;
 	Camera* m_camera;
+	unsigned int cubeVAO;
+	unsigned int cubeVBO;
 };
