@@ -16,8 +16,7 @@
 #include <iostream>
 #include <sstream>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+#include "Textures.h"
 
 
 #pragma comment (lib, "glfw3dll.lib")
@@ -33,41 +32,41 @@ float circleRadius = 2.f;
 
 Camera* camera = nullptr;
 
-unsigned int CreateTexture(const std::string& strTexturePath)
-{
-    unsigned int textureId = -1;
-
-    // load image, create texture and generate mipmaps
-    int width, height, nrChannels;
-    stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-    unsigned char* data = stbi_load(strTexturePath.c_str(), &width, &height, &nrChannels, 0);
-    if (data) {
-        GLenum format;
-        if (nrChannels == 1)
-            format = GL_RED;
-        else if (nrChannels == 3)
-            format = GL_RGB;
-        else if (nrChannels == 4)
-            format = GL_RGBA;
-
-        glGenTextures(1, &textureId);
-        glBindTexture(GL_TEXTURE_2D, textureId);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-        // set the texture wrapping parameters
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        // set texture filtering parameters
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    }
-    else {
-        std::cout << "Failed to load texture: " << strTexturePath << std::endl;
-    }
-    stbi_image_free(data);
-    return textureId;
-}
+//unsigned int CreateTexture(const std::string& strTexturePath)
+//{
+//    unsigned int textureId = -1;
+//
+//    // load image, create texture and generate mipmaps
+//    int width, height, nrChannels;
+//    stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+//    unsigned char* data = stbi_load(strTexturePath.c_str(), &width, &height, &nrChannels, 0);
+//    if (data) {
+//        GLenum format;
+//        if (nrChannels == 1)
+//            format = GL_RED;
+//        else if (nrChannels == 3)
+//            format = GL_RGB;
+//        else if (nrChannels == 4)
+//            format = GL_RGBA;
+//
+//        glGenTextures(1, &textureId);
+//        glBindTexture(GL_TEXTURE_2D, textureId);
+//        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+//        glGenerateMipmap(GL_TEXTURE_2D);
+//
+//        // set the texture wrapping parameters
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//        // set texture filtering parameters
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//    }
+//    else {
+//        std::cout << "Failed to load texture: " << strTexturePath << std::endl;
+//    }
+//    stbi_image_free(data);
+//    return textureId;
+//}
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -86,12 +85,12 @@ bool isRotating = false;
 
 int main(int argc, char** argv)
 {
-    std::string strFullExeFileName = argv[0];
+    /*std::string strFullExeFileName = argv[0];
     std::string strExePath;
     const size_t last_slash_idx = strFullExeFileName.rfind('\\');
     if (std::string::npos != last_slash_idx) {
         strExePath = strFullExeFileName.substr(0, last_slash_idx);
-    }
+    }*/
 
     // glfw: initialize and configure
     glfwInit();
@@ -131,8 +130,8 @@ int main(int argc, char** argv)
 
     // load textures
     // -------------
-    unsigned int floorTexture = CreateTexture(strExePath + "\\..\\..\\Images\\Floor.jpg");
-
+    Textures textures{ argv[0] };
+    textures.AddTexture("Floor", "Floor.jpg");
 
     // configure depth map FBO
     // -----------------------
@@ -219,7 +218,7 @@ int main(int argc, char** argv)
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, floorTexture);
+        glBindTexture(GL_TEXTURE_2D, textures.GetTexture("Floor"));
         glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT);
         renderScene(shadowMappingDepthShader);
@@ -243,7 +242,7 @@ int main(int argc, char** argv)
         shadowMappingShader.SetVec3("lightPos", lightPos);
         shadowMappingShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, floorTexture);
+        glBindTexture(GL_TEXTURE_2D, textures.GetTexture("Floor"));
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, depthMap);
         glDisable(GL_CULL_FACE);
@@ -511,3 +510,5 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yOffset)
 {
     camera->ProcessMouseScroll((float)yOffset);
 }
+
+
