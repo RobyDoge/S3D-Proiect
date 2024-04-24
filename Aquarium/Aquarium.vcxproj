@@ -136,6 +136,7 @@
   <ItemGroup>
     <ClCompile Include="Aquarium.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="SceneRenderer.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Textures.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -156,6 +157,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="SceneRenderer.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Textures.h" />
     <ClInclude Include="Window.h" />
