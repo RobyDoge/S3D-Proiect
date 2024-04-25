@@ -2,26 +2,30 @@
 #include <glew.h>
 #include <memory>
 
-
+SceneRenderer::SceneRenderer(const string& projectPath) : m_textures{ projectPath }
+{
+    m_textures.AddTexture("Floor", "Floor.jpg");
+    m_textures.AddTexture("Ceiling", "Ceiling.jpg");
+}
 
 void SceneRenderer::Init()
 {
-    m_renderers.emplace_back([this]() {RenderCeiling(); });
-    m_renderers.emplace_back([this] { RenderCeiling(); });/*
-    m_renderers.emplace_back([this] { RenderCube(); });*/
+    m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderCeiling(shader,deltaTime); });
+    m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) { RenderFloor(shader, deltaTime); });
+    m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) { RenderCube(shader, deltaTime); });
 }
 
 void SceneRenderer::Render(const Shader& shader, float deltaTime) const
 {
-    glm::mat4 model;
+	constexpr glm::mat4 model{1};
     shader.SetMat4("model", model);
 	for (const auto& render : m_renderers)
 	{
-		render();
+		render(shader,deltaTime);
 	}
 }
 
-void SceneRenderer::RenderFloor()
+void SceneRenderer::RenderFloor(const Shader& shader, const float deltaTime)
 {
     if (m_planeVao == 0) {
         // set up vertex data (and buffer(s)) and configure vertex attributes
@@ -50,11 +54,15 @@ void SceneRenderer::RenderFloor()
         glBindVertexArray(0);
     }
 
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_textures.GetTexture("Floor"));
+
     glBindVertexArray(m_planeVao);
     glDrawArrays(GL_TRIANGLES, 0, 6);
+   
 }
 
-void SceneRenderer::RenderCube()
+void SceneRenderer::RenderCube(const Shader& shader, const float deltaTime)
 {
     // initialize (if necessary)
     if (m_cubeVao == 0)
@@ -125,7 +133,7 @@ void SceneRenderer::RenderCube()
     glBindVertexArray(0);
 }
 
-void SceneRenderer::RenderCeiling()
+void SceneRenderer::RenderCeiling(const Shader& shader, const float deltaTime)
 {
     if (m_ceilingVao == 0) {
         constexpr float ceilingVertices[] = {
@@ -137,19 +145,11 @@ void SceneRenderer::RenderCeiling()
             -5.0f,  5.0f, -5.0f,  0.0f,  1.0f,  0.0f,  0.0f,  5.0f, // Stânga-jos
              5.0f,  5.0f, -5.0f,  0.0f,  1.0f,  0.0f,  5.0f,  5.0f  // Dreapta-jos
         };
-
-
-
         glGenVertexArrays(1, &m_ceilingVao);
-
         glGenBuffers(1, &m_ceilingVbo);
-
-
         glBindVertexArray(m_ceilingVao);
         glBindBuffer(GL_ARRAY_BUFFER, m_ceilingVbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(ceilingVertices), ceilingVertices, GL_STATIC_DRAW);
-
-
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), static_cast<void*>(nullptr));
         glEnableVertexAttribArray(1);
@@ -161,7 +161,12 @@ void SceneRenderer::RenderCeiling()
         glBindVertexArray(0);
     }
 
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_textures.GetTexture("Ceiling"));
+
+    
     glBindVertexArray(m_ceilingVao);
     glDrawArrays(GL_TRIANGLES, 0, 6);
-    glBindVertexArray(0);
+    
 }
