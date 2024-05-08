@@ -1,5 +1,4 @@
-﻿//Added by Us:
-#include "Camera.h"
+﻿#include "Camera.h"
 #include "Shader.h"
 #include "Window.h"
 #include "SceneRenderer.h"
@@ -27,8 +26,8 @@ int main(int argc, char** argv)
     glewInit();
     glEnable(GL_DEPTH_TEST);
 
-    const Shader shadowMappingShader("ShadowMapping.vs", "ShadowMapping.fs");
-    const Shader shadowMappingDepthShader("ShadowMappingDepth.vs", "ShadowMappingDepth.fs");
+    const Shader shadowMappingShader("Shaders\\ShadowMapping.vs", "Shaders\\ShadowMapping.fs");
+    const Shader shadowMappingDepthShader("Shaders\\ShadowMappingDepth.vs", "Shaders\\ShadowMappingDepth.fs");
 
     // create a framebuffer object + textures
     SceneRenderer scene_renderer = { argv[0] };

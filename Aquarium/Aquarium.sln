@@ -5,6 +5,14 @@ VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Aquarium", "Aquarium.vcxproj", "{2AD69D87-F0B8-4DFC-9417-BD64B20253F4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shaders", "Shaders", "{AA18CDB5-011F-4397-89EA-D7D7E871CEAE}"
+	ProjectSection(SolutionItems) = preProject
+		Shaders\ShadowMapping.fs = Shaders\ShadowMapping.fs
+		Shaders\ShadowMapping.vs = Shaders\ShadowMapping.vs
+		Shaders\ShadowMappingDepth.fs = Shaders\ShadowMappingDepth.fs
+		Shaders\ShadowMappingDepth.vs = Shaders\ShadowMappingDepth.vs
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\S3D-Proiect\Aquarium\Externals\STB;D:\S3D-Proiect\Aquarium\Externals\GLM;D:\S3D-Proiect\Aquarium\Externals\GLFW;D:\S3D-Proiect\Aquarium\Externals\GLEW;..\Aquarium\Externals\STB\;..\Aquarium\Externals\GLM\;..\Aquarium\Externals\GLFW\Include;..\Aquarium\Externals\GLEW\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\S3D-Proiect\Aquarium\Externals\GLFW\Lib;D:\S3D-Proiect\Aquarium\Externals\GLEW\Lib;..\Aquarium\Externals\GLFW\Lib\;..\Aquarium\Externals\GLEW\Lib\;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\Aquarium\Externals\Assimp.3.0.0\build\native\include;..\Aquarium\Externals\STB\;..\Aquarium\Externals\GLM\;..\Aquarium\Externals\GLFW\Include;..\Aquarium\Externals\GLEW\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\S3D-Proiect\Aquarium\Externals\GLFW\Lib;D:\S3D-Proiect\Aquarium\Externals\GLEW\Lib;..\Aquarium\Externals\GLFW\Lib\;..\Aquarium\Externals\GLEW\Lib\;..\Aquarium\Externals\Assimp.3.0.0\build\native\lib\x64\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>D:\S3D-Proiect\Aquarium\Externals\STB;D:\S3D-Proiect\Aquarium\Externals\GLM;D:\S3D-Proiect\Aquarium\Externals\GLFW;D:\S3D-Proiect\Aquarium\Externals\GLEW;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
@@ -148,20 +148,6 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ShadowMapping.fs">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </None>
-    <None Include="ShadowMapping.vs">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </None>
-    <None Include="ShadowMappingDepth.fs">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </None>
-    <None Include="ShadowMappingDepth.vs">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
@@ -170,6 +156,12 @@
     <ClInclude Include="Textures.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="Window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Images\Aquarium.jpg" />
+    <Image Include="Images\Ceiling.jpg" />
+    <Image Include="Images\Floor.jpg" />
+    <Image Include="Images\Walls.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
