@@ -1,18 +1,21 @@
 ﻿#include "SceneRenderer.h"
 #include <glew.h>
 #include <memory>
+#include <string>
+
 
 SceneRenderer::SceneRenderer(const string& projectPath) : m_textures{ projectPath }
 {
     m_textures.AddTexture("Floor", "Floor.jpg");
     m_textures.AddTexture("Ceiling", "Ceiling.jpg");
+    m_textures.AddTexture("Walls", "Walls.jpg");
 }
 
 void SceneRenderer::Init()
 {
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderCeiling(shader,deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) { RenderFloor(shader, deltaTime); });
-    m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) { RenderCube(shader, deltaTime); });
+    m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) { RenderWalls(shader, deltaTime); });
 }
 
 void SceneRenderer::Render(const Shader& shader, float deltaTime) const
@@ -62,82 +65,12 @@ void SceneRenderer::RenderFloor(const Shader& shader, const float deltaTime)
    
 }
 
-void SceneRenderer::RenderCube(const Shader& shader, const float deltaTime)
-{
-    // initialize (if necessary)
-    if (m_cubeVao == 0)
-    {
-        constexpr float vertices[] = {
-            // back face
-            -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-            1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
-            1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f, // bottom-right         
-            1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
-            -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-            -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f, // top-left
-            // front face
-            -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
-            1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f, // bottom-right
-            1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
-            1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
-            -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f, // top-left
-            -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
-            // left face
-            -1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
-            -1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-left
-            -1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
-            -1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
-            -1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-            -1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
-            // right face
-            1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
-            1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
-            1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-right         
-            1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
-            1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
-            1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
-            // bottom face
-            -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
-            1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f, // top-left
-            1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
-            1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
-            -1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-            -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
-            // top face
-            -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
-            1.0f,  1.0f , 1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
-            1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f, // top-right     
-            1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
-            -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
-            -1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left        
-        };
-        glGenVertexArrays(1, &m_cubeVao);
-        glGenBuffers(1, &m_cubeVbo);
-        // fill buffer
-        glBindBuffer(GL_ARRAY_BUFFER, m_cubeVbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        // link vertex attributes
-        glBindVertexArray(m_cubeVao);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-    }
-    // render Cube
-    glBindVertexArray(m_cubeVao);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
-}
 
 void SceneRenderer::RenderCeiling(const Shader& shader, const float deltaTime)
 {
     if (m_ceilingVao == 0) {
         constexpr float ceilingVertices[] = {
-            // Pozitii           // Normale         // Coordonate textură
+             //Pozitii           // Normale         // Coordonate textură
              5.0f,  5.0f,  5.0f,  0.0f,  1.0f,  0.0f,  5.0f,  0.0f, // Dreapta-sus
             -5.0f,  5.0f,  5.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f, // Stânga-sus
             -5.0f,  5.0f, -5.0f,  0.0f,  1.0f,  0.0f,  0.0f,  5.0f, // Stânga-jos
@@ -169,4 +102,67 @@ void SceneRenderer::RenderCeiling(const Shader& shader, const float deltaTime)
     glBindVertexArray(m_ceilingVao);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     
+}
+void SceneRenderer::RenderWalls(const Shader& shader, const float deltaTime)
+{
+    if (m_wallVao == 0) {
+        // Definiți geometria peretelui
+        constexpr float wallVertices[] = {
+            // Fața
+            // Pozitii           // Normale         // Coordonate textură
+            -5.0f, -0.5f, -5.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // Stânga-jos
+            -5.0f,  5.0f, -5.0f, 0.0f, 0.0f, -1.0f, 0.0f, 5.0f, // Stânga-sus
+             5.0f,  5.0f, -5.0f, 0.0f, 0.0f, -1.0f, 5.0f, 5.0f, // Dreapta-sus
+             5.0f,  5.0f, -5.0f, 0.0f, 0.0f, -1.0f, 5.0f, 5.0f, // Dreapta-sus
+             5.0f, -0.5f, -5.0f, 0.0f, 0.0f, -1.0f, 5.0f, 0.0f, // Dreapta-jos
+            -5.0f, -0.5f, -5.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // Stânga-jos
+            // Spatele
+            // Adăugați definițiile pentru spate (inversa fața)
+            -5.0f, -0.5f,  5.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // Stânga-jos
+             5.0f,  5.0f,  5.0f, 0.0f, 0.0f, 1.0f, 5.0f, 5.0f, // Dreapta-sus
+            -5.0f,  5.0f,  5.0f, 0.0f, 0.0f, 1.0f, 0.0f, 5.0f, // Stânga-sus
+             5.0f, -0.5f,  5.0f, 0.0f, 0.0f, 1.0f, 5.0f, 0.0f, // Dreapta-jos
+             5.0f,  5.0f,  5.0f, 0.0f, 0.0f, 1.0f, 5.0f, 5.0f, // Dreapta-sus
+            -5.0f, -0.5f,  5.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // Stânga-jos
+            // Stânga
+            // Adăugați definițiile pentru stânga (rotire la stânga față)
+            -5.0f, -0.5f,  5.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Stânga-jos
+            -5.0f,  5.0f,  5.0f, -1.0f, 0.0f, 0.0f, 5.0f, 0.0f, // Stânga-sus
+            -5.0f,  5.0f, -5.0f, -1.0f, 0.0f, 0.0f, 5.0f, 5.0f, // Dreapta-sus
+            -5.0f,  5.0f, -5.0f, -1.0f, 0.0f, 0.0f, 5.0f, 5.0f, // Dreapta-sus
+            -5.0f, -0.5f, -5.0f, -1.0f, 0.0f, 0.0f, 0.0f, 5.0f, // Dreapta-jos
+            -5.0f, -0.5f,  5.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Stânga-jos
+            // Dreapta
+            // Adăugați definițiile pentru dreapta (rotire la dreapta față)
+             5.0f, -0.5f, -5.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Stânga-jos
+             5.0f,  5.0f, -5.0f, 1.0f, 0.0f, 0.0f, 5.0f, 0.0f, // Stânga-sus
+             5.0f,  5.0f,  5.0f, 1.0f, 0.0f, 0.0f, 5.0f, 5.0f, // Dreapta-sus
+             5.0f,  5.0f,  5.0f, 1.0f, 0.0f, 0.0f, 5.0f, 5.0f, // Dreapta-sus
+             5.0f, -0.5f,  5.0f, 1.0f, 0.0f, 0.0f, 0.0f, 5.0f, // Dreapta-jos
+             5.0f, -0.5f, -5.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f  // Stânga-jos
+        };
+
+        glGenVertexArrays(1, &m_wallVao);
+        glGenBuffers(1, &m_wallVbo);
+        glBindVertexArray(m_wallVao);
+        glBindBuffer(GL_ARRAY_BUFFER, m_wallVbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(wallVertices), wallVertices, GL_STATIC_DRAW);
+        // Specificați atributele vertex-ului
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), static_cast<void*>(nullptr));
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float)));
+        glBindVertexArray(0);
+    }
+
+    // Texturați pereții
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_textures.GetTexture("Walls"));
+
+    // Desenați pereții
+    glBindVertexArray(m_wallVao);
+    glDrawArrays(GL_TRIANGLES, 0, 36); // Numărul total de vertecși pentru toți pereții
+    glBindVertexArray(0);
 }
