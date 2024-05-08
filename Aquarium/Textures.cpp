@@ -46,10 +46,15 @@ void Textures::AddTexture(const string& textureAliasName, const string& imageNam
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
     stbi_image_free(data);
-    m_textures.insert({textureAliasName,textureId});
+    m_textures.insert({ textureAliasName,{textureId,""} });
 }
 
-unsigned Textures::GetTexture(const string& textureName) const
+Textures::TextureData Textures::GetTexture(const string& textureName) const
 {
 	return m_textures.at(textureName);
+}
+
+std::unordered_map<string, Textures::TextureData> Textures::GetTextures()
+{
+    return m_textures;
 }

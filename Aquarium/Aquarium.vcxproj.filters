@@ -30,25 +30,34 @@
     <ClCompile Include="Textures.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Window.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="SceneRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Acvariu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ShadowMapping.fs">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="ShadowMapping.vs">
-      <Filter>Source Files</Filter>
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="ShadowMapping.fs">
+      <Filter>Resource Files</Filter>
     </None>
     <None Include="ShadowMappingDepth.fs">
-      <Filter>Source Files</Filter>
+      <Filter>Resource Files</Filter>
     </None>
     <None Include="ShadowMappingDepth.vs">
-      <Filter>Source Files</Filter>
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -65,6 +74,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SceneRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Acvariu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -18,7 +18,7 @@ void SceneRenderer::Init()
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) { RenderWalls(shader, deltaTime); });
 }
 
-void SceneRenderer::Render(const Shader& shader, float deltaTime) const
+void SceneRenderer::Render(const Shader& shader, const float deltaTime) const
 {
 	constexpr glm::mat4 model{1};
     shader.SetMat4("model", model);
@@ -59,7 +59,7 @@ void SceneRenderer::RenderFloor(const Shader& shader, const float deltaTime)
     }
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_textures.GetTexture("Floor"));
+    glBindTexture(GL_TEXTURE_2D, m_textures.GetTexture("Floor").id);
 
     glBindVertexArray(m_planeVao);
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -97,7 +97,7 @@ void SceneRenderer::RenderCeiling(const Shader& shader, const float deltaTime)
 
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_textures.GetTexture("Ceiling"));
+    glBindTexture(GL_TEXTURE_2D, m_textures.GetTexture("Ceiling").id);
 
     
     glBindVertexArray(m_ceilingVao);
@@ -160,7 +160,7 @@ void SceneRenderer::RenderWalls(const Shader& shader, const float deltaTime)
 
     // Texturați pereții
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_textures.GetTexture("Walls"));
+    glBindTexture(GL_TEXTURE_2D, m_textures.GetTexture("Walls").id);
 
     // Desenați pereții
     glBindVertexArray(m_wallVao);
@@ -233,7 +233,7 @@ void SceneRenderer::RenderAquarium(const Shader& shader, float deltaTime) const
     //// Texturați acvariul
     //glActiveTexture(GL_TEXTURE0);
     //// Presupunând că aveți o textură pentru acvariu
-    //glBindTexture(GL_TEXTURE_2D, m_textures.GetTexture("Aquarium"));
+    //glBindTexture(GL_TEXTURE_2D, m_textures.GetTexture("Aquarium").id);
 
     // Desenați acvariul
     glBindVertexArray(aquariumVao);
