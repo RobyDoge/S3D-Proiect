@@ -16,6 +16,7 @@ private:
 	void RenderFloor(const Shader& shader, float deltaTime);
 	void RenderCeiling(const Shader& shader, float deltaTime);
 	void RenderWalls(const Shader& shader, float deltaTime);
+	void RenderAquarium(const Shader& shader, float deltaTime) const;
 
 private:
 	unsigned int m_ceilingVao{ 0 };

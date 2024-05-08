@@ -26,6 +26,7 @@ void SceneRenderer::Render(const Shader& shader, float deltaTime) const
 	{
 		render(shader,deltaTime);
 	}
+    RenderAquarium(shader, deltaTime);
 }
 
 void SceneRenderer::RenderFloor(const Shader& shader, const float deltaTime)
@@ -164,5 +165,78 @@ void SceneRenderer::RenderWalls(const Shader& shader, const float deltaTime)
     // Desenați pereții
     glBindVertexArray(m_wallVao);
     glDrawArrays(GL_TRIANGLES, 0, 36); // Numărul total de vertecși pentru toți pereții
+    glBindVertexArray(0);
+}
+
+void SceneRenderer::RenderAquarium(const Shader& shader, float deltaTime) const
+{
+    // Definirea geometriei acvariului
+    constexpr float aquariumVertices[] = {
+        // Pozitii           // Normale         // Coordonate textură
+        // Față
+        -2.0f, -0.2f, -2.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // Stânga-jos
+        -2.0f,  2.0f, -2.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, // Stânga-sus
+         2.0f,  2.0f, -2.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, // Dreapta-sus
+         2.0f,  2.0f, -2.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, // Dreapta-sus
+         2.0f, -0.2f, -2.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, // Dreapta-jos
+        -2.0f, -0.2f, -2.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // Stânga-jos
+        // Spate
+        // Adăugați definițiile pentru spate (inversa fața)
+        -2.0f, -0.2f,  2.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // Stânga-jos
+         2.0f,  2.0f,  2.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // Dreapta-sus
+        -2.0f,  2.0f,  2.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, // Stânga-sus
+         2.0f, -0.2f,  2.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, // Dreapta-jos
+         2.0f,  2.0f,  2.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // Dreapta-sus
+        -2.0f, -0.2f,  2.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // Stânga-jos
+        // Stânga
+        // Adăugați definițiile pentru stânga (rotire la stânga față)
+        -2.0f, -0.2f,  2.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Stânga-jos
+        -2.0f,  2.0f,  2.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // Stânga-sus
+        -2.0f,  2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // Dreapta-sus
+        -2.0f,  2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // Dreapta-sus
+        -2.0f, -0.2f, -2.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // Dreapta-jos
+        -2.0f, -0.2f,  2.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Stânga-jos
+        // Dreapta
+        // Adăugați definițiile pentru dreapta (rotire la dreapta față)
+         2.0f, -0.2f, -2.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Stânga-jos
+         2.0f,  2.0f, -2.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // Stânga-sus
+         2.0f,  2.0f,  2.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // Dreapta-sus
+         2.0f,  2.0f,  2.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // Dreapta-sus
+         2.0f, -0.2f,  2.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // Dreapta-jos
+         2.0f, -0.2f, -2.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f  // Stânga-jos
+    };
+
+    unsigned int aquariumVao = 0;
+    unsigned int aquariumVbo = 0;
+
+    if (aquariumVao == 0) {
+        glGenVertexArrays(1, &aquariumVao);
+        glGenBuffers(1, &aquariumVbo);
+        glBindVertexArray(aquariumVao);
+        glBindBuffer(GL_ARRAY_BUFFER, aquariumVbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(aquariumVertices), aquariumVertices, GL_STATIC_DRAW);
+        // Specificați atributele vertex-ului
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), static_cast<void*>(nullptr));
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float)));
+        glBindVertexArray(0);
+    }
+
+    //TEXTURA SAU O CULOARE GRI-ALBASTRIE CU TRANSPARENTA MARE CARE SA IMITE STICLA???????
+
+    //glm::vec4 aquariumColor = glm::vec4(1.0f, 1.0f, 1.0f, 0.5f); // Alb-gri cu transparență
+    //shader.SetVec4("aquariumColor", aquariumColor);
+
+    //// Texturați acvariul
+    //glActiveTexture(GL_TEXTURE0);
+    //// Presupunând că aveți o textură pentru acvariu
+    //glBindTexture(GL_TEXTURE_2D, m_textures.GetTexture("Aquarium"));
+
+    // Desenați acvariul
+    glBindVertexArray(aquariumVao);
+    glDrawArrays(GL_TRIANGLES, 0, 36); // Numărul total de vertecși pentru toate fețele acvariului
     glBindVertexArray(0);
 }

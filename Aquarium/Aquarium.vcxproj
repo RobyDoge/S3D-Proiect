@@ -138,7 +138,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Acvariu.cpp" />
     <ClCompile Include="Aquarium.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="SceneRenderer.cpp" />
@@ -161,7 +160,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Acvariu.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="SceneRenderer.h" />
     <ClInclude Include="Shader.h" />

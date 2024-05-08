@@ -1,5 +1,4 @@
 #include "Camera.h"
-#include "Acvariu.h"
 #include <glew.h>
 
 Camera::Camera(const int width, const int height, const glm::vec3& position)
