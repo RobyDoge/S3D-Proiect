@@ -33,9 +33,6 @@
     <ClCompile Include="SceneRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Acvariu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -45,20 +42,6 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ShadowMapping.vs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="ShadowMapping.fs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="ShadowMappingDepth.fs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="ShadowMappingDepth.vs">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -76,9 +59,6 @@
     <ClInclude Include="SceneRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Acvariu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -88,5 +68,22 @@
     <ClInclude Include="Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ObjectTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Images\Aquarium.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Ceiling.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Floor.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Walls.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

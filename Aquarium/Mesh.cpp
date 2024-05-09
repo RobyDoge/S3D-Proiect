@@ -2,7 +2,7 @@
 #include <glew.h>
 #include <ranges>
 
-Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned>& indices, const Textures& textures)
+Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned>& indices, const std::vector<ObjectTexture>& textures)
 {
 	numVertices = vertices.size();
 	this->vertices.reset(new Vertex[numVertices]);
@@ -20,36 +20,35 @@ Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned>& ind
 	}
 	this->m_textures = textures;
 
-	setupMesh();
+	SetupMesh();
 }
 
-Mesh::Mesh(const unsigned numVertices, const std::shared_ptr<Vertex>& vertices, const unsigned numIndexes,
-           const std::shared_ptr<unsigned>& indices, const Textures& textures):
+Mesh::Mesh(unsigned int numVertices, const std::shared_ptr<Vertex>& vertices, unsigned int numIndexes, 
+	const std::shared_ptr<unsigned int>& indices, const std::vector<ObjectTexture>& textures) :
 	numVertices(numVertices),
 	vertices(vertices),
 	numIndexes(numIndexes),
 	indices(indices),
 	m_textures(textures)
 {
-	setupMesh();
+	SetupMesh();
 }
+
 
 void Mesh::Draw(const Shader& shader)
 {
-	//std::cout << "start drawing " << std::endl;
-
 	// bind appropriate m_textures
 	unsigned int diffuseNr = 1;
 	unsigned int specularNr = 1;
 	unsigned int normalNr = 1;
 	unsigned int heightNr = 1;
 	unsigned int index{0};
-	for (const auto& texture : m_textures.GetTextures() | std::views::values)
+	for (const auto& texture : m_textures)
 	{
 		glActiveTexture(GL_TEXTURE0 + index); // active proper texture unit before binding
 		// retrieve texture number (the N in diffuse_textureN)
-		string number;
-		string name = texture.type;
+		std::string number;
+		std::string name = texture.type;
 		if (name == "texture_diffuse")
 			number = std::to_string(diffuseNr++);
 		else if (name == "texture_specular")
@@ -75,10 +74,9 @@ void Mesh::Draw(const Shader& shader)
 
 	// always good practice to set everything back to defaults once configured.
 	glActiveTexture(GL_TEXTURE0);
-	//std::cout << "end drawing " << std::endl;
 }
 
-void Mesh::setupMesh()
+void Mesh::SetupMesh()
 {
 	// create buffers/arrays
 	glGenVertexArrays(1, &VAO);
