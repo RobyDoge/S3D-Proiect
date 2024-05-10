@@ -18,8 +18,8 @@ private:
     void LoadModel(std::string const& path, bool smoothNormals);
     void ProcessNode(const aiNode* node, const aiScene* scene);
 	Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
-	std::vector<ObjectTexture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
-	unsigned int TextureFromFile(const char* path, bool gamma = false);
+	std::vector<ObjectTexture> LoadMaterialTextures(const aiMaterial* mat, aiTextureType type, const std::string& typeName);
+	unsigned int TextureFromFile(const char* path, bool gamma = false) const;
 private:
 	std::vector<ObjectTexture> m_textures;
 	std::vector<Mesh> m_meshes;

@@ -143,7 +143,7 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
     return {vertices, indices, textures };
 }
 
-std::vector<ObjectTexture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
+std::vector<ObjectTexture> Model::LoadMaterialTextures(const aiMaterial* mat, const aiTextureType type, const std::string& typeName)
 {
     std::vector<ObjectTexture> textures;
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
@@ -175,7 +175,7 @@ std::vector<ObjectTexture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextur
     return textures;
 }
 
-unsigned int Model::TextureFromFile(const char* path, bool gamma)
+unsigned int Model::TextureFromFile(const char* path, bool gamma) const
 {
 
     std::string filename = { path };

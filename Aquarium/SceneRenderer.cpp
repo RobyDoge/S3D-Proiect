@@ -336,7 +336,7 @@ void SceneRenderer::RenderFish(const Shader& shader, float deltaTime)
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float)));
         glEnableVertexAttribArray(2);
     }
-    glm::mat4 fishModel = glm::scale(glm::mat4(1.0), glm::vec3(0.01f));
+    glm::mat4 fishModel = glm::scale(glm::mat4(1.0), glm::vec3(0.1f));
     fishModel = glm::rotate(fishModel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         
     shader.SetMat4("model", fishModel);

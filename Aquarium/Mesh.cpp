@@ -4,38 +4,38 @@
 
 Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned>& indices, const std::vector<ObjectTexture>& textures)
 {
-	numVertices = vertices.size();
-	this->vertices.reset(new Vertex[numVertices]);
+	m_numVertices = vertices.size();
+	this->m_vertices.reset(new Vertex[m_numVertices]);
 
 	for (size_t i = 0; i < vertices.size(); ++i)
 	{
-		this->vertices.get()[i] = vertices[i];
+		this->m_vertices.get()[i] = vertices[i];
 	}
 
-	numIndexes = indices.size();
-	this->indices.reset(new unsigned int[numIndexes]);
+	m_numIndexes = indices.size();
+	this->m_indices.reset(new unsigned int[m_numIndexes]);
 	for (size_t i = 0; i < indices.size(); ++i)
 	{
-		this->indices.get()[i] = indices[i];
+		this->m_indices.get()[i] = indices[i];
 	}
 	this->m_textures = textures;
 
 	SetupMesh();
 }
 
-Mesh::Mesh(unsigned int numVertices, const std::shared_ptr<Vertex>& vertices, unsigned int numIndexes, 
-	const std::shared_ptr<unsigned int>& indices, const std::vector<ObjectTexture>& textures) :
-	numVertices(numVertices),
-	vertices(vertices),
-	numIndexes(numIndexes),
-	indices(indices),
+Mesh::Mesh(const unsigned int numVertices, const std::shared_ptr<Vertex>& vertices, const unsigned int numIndexes, 
+           const std::shared_ptr<unsigned int>& indices, const std::vector<ObjectTexture>& textures) :
+	m_numVertices(numVertices),
+	m_vertices(vertices),
+	m_numIndexes(numIndexes),
+	m_indices(indices),
 	m_textures(textures)
 {
 	SetupMesh();
 }
 
 
-void Mesh::Draw(const Shader& shader)
+void Mesh::Draw(const Shader& shader) const
 {
 	// bind appropriate m_textures
 	unsigned int diffuseNr = 1;
@@ -66,10 +66,10 @@ void Mesh::Draw(const Shader& shader)
 	}
 
 	// draw mesh
-	glBindVertexArray(VAO);
+	glBindVertexArray(m_vao);
 
 	//std::cout << "draw triangles: " << numIndexes << std::endl;
-	glDrawElements(GL_TRIANGLES, numIndexes, GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_TRIANGLES, m_numIndexes, GL_UNSIGNED_INT, nullptr);
 	glBindVertexArray(0);
 
 	// always good practice to set everything back to defaults once configured.
@@ -79,20 +79,20 @@ void Mesh::Draw(const Shader& shader)
 void Mesh::SetupMesh()
 {
 	// create buffers/arrays
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
+	glGenVertexArrays(1, &m_vao);
+	glGenBuffers(1, &m_vbo);
+	glGenBuffers(1, &m_ebo);
 
-	glBindVertexArray(VAO);
+	glBindVertexArray(m_vao);
 	// load data into vertex buffers
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 	// A great thing about structs is that their memory layout is sequential for all its items.
 	// The effect is that we can simply pass a pointer to the struct and it translates perfectly to a glm::vec3/2 array which
 	// again translates to 3/2 floats which translates to a byte array.
-	glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vertex), &vertices.get()[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_numVertices * sizeof(Vertex), &m_vertices.get()[0], GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndexes * sizeof(unsigned int), &indices.get()[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_numIndexes * sizeof(unsigned int), &m_indices.get()[0], GL_STATIC_DRAW);
 
 	// set the vertex attribute pointers
 	// vertex Positions
