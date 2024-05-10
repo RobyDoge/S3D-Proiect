@@ -4,18 +4,21 @@
 #include <string>
 
 
-#define GLM_FORCE_CTOR_INIT 
 #include <GLM.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 
 
-SceneRenderer::SceneRenderer(const string& projectPath) : m_textures{ projectPath }
+SceneRenderer::SceneRenderer(const string& projectPath) :m_textures{ projectPath }
 {
     m_textures.AddTexture("Floor", "Floor.jpg");
     m_textures.AddTexture("Ceiling", "Ceiling.jpg");
     m_textures.AddTexture("Walls", "Walls.jpg");
     m_textures.AddTexture("aqua", "aqua.jpg");
+
+    CreateProjectPath(projectPath);
+
+    m_fishModel= Model(m_projectPath + "\\Models\\Fish\\12265_Fish_v1_L2.obj", false, false);
 }
 
 void SceneRenderer::Init()
@@ -24,9 +27,11 @@ void SceneRenderer::Init()
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) { RenderFloor(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) { RenderWalls(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderAquarium(shader, deltaTime); });
+    m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderFish(shader, deltaTime); });
+
 }
 
-void SceneRenderer::Render(const Shader& shader, float deltaTime) const
+void SceneRenderer::Render(const Shader& shader, const float deltaTime) const
 {
     constexpr glm::mat4 model{ 1 };
     shader.SetMat4("model", model);
@@ -35,6 +40,14 @@ void SceneRenderer::Render(const Shader& shader, float deltaTime) const
         render(shader, deltaTime);
     }
 }
+
+void SceneRenderer::CreateProjectPath(const string& string)
+{
+
+    m_projectPath = string.substr(0, string.find_last_of('\\', string.find_last_of(R"(\)") - 1));
+    m_projectPath = m_projectPath.substr(0, m_projectPath.find_last_of(R"(\)"));
+}
+
 
 void SceneRenderer::RenderFloor(const Shader& shader, const float deltaTime)
 {
@@ -237,13 +250,13 @@ void SceneRenderer::RenderAquarium(const Shader& shader, const float deltaTime)
         glBufferData(GL_ARRAY_BUFFER, sizeof(aquariumVertices), aquariumVertices, GL_STATIC_DRAW);
 
         // Atributul pentru poziție
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), static_cast<void*>(nullptr));
         glEnableVertexAttribArray(0);
         // Atributul pentru normală
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
         // Atributul pentru coordonate textură
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float)));
         glEnableVertexAttribArray(2);
     }
 
@@ -256,5 +269,77 @@ void SceneRenderer::RenderAquarium(const Shader& shader, const float deltaTime)
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
 
+}
+
+void SceneRenderer::RenderFish(const Shader& shader, float deltaTime)
+{
+    
+    if (m_fishVao == 0) {
+        // Define vertex data for a cube
+        constexpr float aquariumVertices[] = {
+            // Poziții scalate cu factorul scale    // Normale scalate        
+            -1.0f * 1, -1.0f * 1, -1.0f * 1,  0.0f, 0.0f, -1.0f,
+             1.0f * 1, -1.0f * 1, -1.0f * 1,  0.0f, 0.0f, -1.0f,
+             1.0f * 1,  1.0f * 1, -1.0f * 1,  0.0f, 0.0f, -1.0f,
+             1.0f * 1,  1.0f * 1, -1.0f * 1,  0.0f, 0.0f, -1.0f,
+            -1.0f * 1,  1.0f * 1, -1.0f * 1,  0.0f, 0.0f, -1.0f,
+            -1.0f * 1, -1.0f * 1, -1.0f * 1,  0.0f, 0.0f, -1.0f,
+
+            -1.0f * 1, -1.0f * 1,  1.0f * 1,  0.0f, 0.0f,  1.0f,
+             1.0f * 1, -1.0f * 1,  1.0f * 1,  0.0f, 0.0f,  1.0f,
+             1.0f * 1,  1.0f * 1,  1.0f * 1,  0.0f, 0.0f,  1.0f,
+             1.0f * 1,  1.0f * 1,  1.0f * 1,  0.0f, 0.0f,  1.0f,
+            -1.0f * 1,  1.0f * 1,  1.0f * 1,  0.0f, 0.0f,  1.0f,
+            -1.0f * 1, -1.0f * 1,  1.0f * 1,  0.0f, 0.0f,  1.0f,
+
+            -1.0f * 1,  1.0f * 1,  1.0f * 1, -1.0f, 0.0f, 0.0f,
+            -1.0f * 1,  1.0f * 1, -1.0f * 1, -1.0f, 0.0f, 0.0f,
+            -1.0f * 1, -1.0f * 1, -1.0f * 1, -1.0f, 0.0f, 0.0f,
+            -1.0f * 1, -1.0f * 1, -1.0f * 1, -1.0f, 0.0f, 0.0f,
+            -1.0f * 1, -1.0f * 1,  1.0f * 1, -1.0f, 0.0f, 0.0f,
+            -1.0f * 1,  1.0f * 1,  1.0f * 1, -1.0f, 0.0f, 0.0f,
+
+             1.0f * 1,  1.0f * 1,  1.0f * 1,  1.0f, 0.0f, 0.0f,
+             1.0f * 1,  1.0f * 1, -1.0f * 1,  1.0f, 0.0f, 0.0f,
+             1.0f * 1, -1.0f * 1, -1.0f * 1,  1.0f, 0.0f, 0.0f,
+             1.0f * 1, -1.0f * 1, -1.0f * 1,  1.0f, 0.0f, 0.0f,
+             1.0f * 1, -1.0f * 1,  1.0f * 1,  1.0f, 0.0f, 0.0f,
+             1.0f * 1,  1.0f * 1,  1.0f * 1,  1.0f, 0.0f, 0.0f,
+
+            -1.0f * 1, -1.0f * 1, -1.0f * 1,  0.0f, -1.0f, 0.0f,
+             1.0f * 1, -1.0f * 1, -1.0f * 1,  0.0f, -1.0f, 0.0f,
+             1.0f * 1, -1.0f * 1,  1.0f * 1,  0.0f, -1.0f, 0.0f,
+             1.0f * 1, -1.0f * 1,  1.0f * 1,  0.0f, -1.0f, 0.0f,
+            -1.0f * 1, -1.0f * 1,  1.0f * 1,  0.0f, -1.0f, 0.0f,
+            -1.0f * 1, -1.0f * 1, -1.0f * 1,  0.0f, -1.0f, 0.0f,
+
+            -1.0f * 1,  1.0f * 1, -1.0f * 1,  0.0f,  1.0f, 0.0f,
+             1.0f * 1,  1.0f * 1, -1.0f * 1,  0.0f,  1.0f, 0.0f,
+             1.0f * 1,  1.0f * 1,  1.0f * 1,  0.0f,  1.0f, 0.0f,
+             1.0f * 1,  1.0f * 1,  1.0f * 1,  0.0f,  1.0f, 0.0f,
+            -1.0f * 1,  1.0f * 1,  1.0f * 1,  0.0f,  1.0f, 0.0f,
+            -1.0f * 1,  1.0f * 1, -1.0f * 1,  0.0f,  1.0f, 0.0f,
+        };
+        glGenVertexArrays(1, &m_fishVao);
+        glGenBuffers(1, &m_fishVbo);
+        glBindVertexArray(m_fishVao);
+        glBindBuffer(GL_ARRAY_BUFFER, m_fishVbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(aquariumVertices), aquariumVertices, GL_STATIC_DRAW);
+
+        // Atributul pentru poziție
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), static_cast<void*>(nullptr));
+        glEnableVertexAttribArray(0);
+        // Atributul pentru normală
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
+        // Atributul pentru coordonate textură
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float)));
+        glEnableVertexAttribArray(2);
+    }
+    glm::mat4 fishModel = glm::scale(glm::mat4(1.0), glm::vec3(0.01f));
+    fishModel = glm::rotate(fishModel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        
+    shader.SetMat4("model", fishModel);
+    m_fishModel.Draw(shader);
 }
 

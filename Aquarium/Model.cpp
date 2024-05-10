@@ -4,10 +4,7 @@
 #include <ranges>
 #include <iostream>
 #include <glew.h>
-#ifndef STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-#endif
 
 
 
@@ -17,19 +14,19 @@ Model::Model(std::string const& path, const bool bSmoothNormals, const bool gamm
 	LoadModel(path, bSmoothNormals);
 }
 
-void Model::Draw(Shader& shader)
+void Model::Draw(const Shader& shader)
 {
-    for (unsigned int i = 0; i < m_meshes.size(); i++)
+    for (auto& mesh : m_meshes)
     {
-		m_meshes[i].Draw(shader);
+	    mesh.Draw(shader);
 	}
 }
 
-void Model::LoadModel(std::string const& path, bool bSmoothNormals)
+void Model::LoadModel(std::string const& path, const bool smoothNormals)
 {
     // read file via ASSIMP
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | (bSmoothNormals ? aiProcess_GenSmoothNormals : aiProcess_GenNormals) | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | (smoothNormals ? aiProcess_GenSmoothNormals : aiProcess_GenNormals) | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
     // check for errors
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
     {
@@ -42,7 +39,7 @@ void Model::LoadModel(std::string const& path, bool bSmoothNormals)
     ProcessNode(scene->mRootNode, scene);
 }
 
-void Model::ProcessNode(aiNode* node, const aiScene* scene)
+void Model::ProcessNode(const aiNode* node, const aiScene* scene)
 {
     // process each mesh located at the current node
     for (unsigned int i = 0; i < node->mNumMeshes; i++)

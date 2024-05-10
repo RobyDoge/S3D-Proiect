@@ -7,7 +7,6 @@
 #pragma comment (lib, "glew32.lib")
 #pragma comment (lib, "OpenGL32.lib")
 
-
 constexpr unsigned int SCREEN_WIDTH {1920};
 constexpr unsigned int SCREEN_HEIGHT{1080};
 

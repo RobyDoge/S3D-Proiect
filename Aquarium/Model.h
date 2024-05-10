@@ -10,12 +10,13 @@
 class Model
 {
 public:
+	Model()= default;
     Model(std::string const& path, bool bSmoothNormals, bool gamma = false);
-    void Draw(Shader& shader);
+    void Draw(const Shader& shader);
 
 private:
-    void LoadModel(std::string const& path, bool bSmoothNormals);
-    void ProcessNode(aiNode* node, const aiScene* scene);
+    void LoadModel(std::string const& path, bool smoothNormals);
+    void ProcessNode(const aiNode* node, const aiScene* scene);
 	Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
 	std::vector<ObjectTexture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 	unsigned int TextureFromFile(const char* path, bool gamma = false);

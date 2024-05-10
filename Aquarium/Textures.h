@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include <string>
 #include <unordered_map>
-#define STB_IMAGE_IMPLEMENTATION
 
 
 using std::string;
@@ -15,9 +14,7 @@ public:
 	~Textures() = default;
 	void Add(const Textures& other);
 
-	void AddTexture(const string& textureAliasName, const string& imageName);/*
-	void AddTexture(const TextureData& texture);
-	void AddTexture(const string& textureAliasName, const string& imageName, const string& typeName);*/
+	void AddTexture(const string& textureAliasName, const string& imageName);
 	
 	unsigned int GetTexture(const string& textureName) const;
 
