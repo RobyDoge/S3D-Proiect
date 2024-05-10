@@ -95,12 +95,13 @@ void Camera::ProcessKeyboard(const MovementType direction, const float deltaTime
     }
 }
 
-void Camera::MouseControl(const float xPos, const float yPos)
+void Camera::MouseControl(const float xPos, const float yPos, const int isMoving)
 {
-    if (m_firstMouseMove) {
+    if (m_firstMouseMove || m_isMoving != isMoving) {
         m_lastX = xPos;
         m_lastY = yPos;
         m_firstMouseMove = false;
+        m_isMoving = isMoving;
     }
 
     float xChange = xPos - m_lastX;
@@ -128,7 +129,7 @@ void Camera::ProcessMouseScroll(const float yOffset)
         m_yFov = 90.0f;
 }
 
-void Camera::ProcessMouseMovement(float xOffset, const float yOffset, const bool constrainPitch)
+void Camera::ProcessMouseMovement(const float xOffset, const float yOffset, const bool constrainPitch)
 {
     m_yaw += xOffset;
     m_pitch += yOffset;

@@ -28,7 +28,7 @@ public:
 	glm::mat4 GetViewMatrix() const;
 	glm::mat4 GetProjectionMatrix() const;
 	void ProcessKeyboard(MovementType direction, float deltaTime);
-	void MouseControl(float xPos, float yPos);
+	void MouseControl(float xPos, float yPos, int isMoving);
 	void ProcessMouseScroll(float yOffset);
 
 private:
@@ -65,6 +65,5 @@ private:
 	bool m_firstMouseMove;
 	float m_lastX;
 	float m_lastY;
-
-	
+	int m_isMoving;
 };

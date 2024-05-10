@@ -21,8 +21,13 @@ private:
 	}
 	inline static void Mouse_Callback(GLFWwindow* win, const double xPos, const double yPos)
 	{
+		if (glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) != GLFW_PRESS)
+		{
+			++m_movingSegment;
+			return;
+		}
 		const auto window = static_cast<Window*>(glfwGetWindowUserPointer(win));
-		window->m_camera->MouseControl(static_cast<float>(xPos), static_cast<float>(yPos));
+		window->m_camera->MouseControl(static_cast<float>(xPos), static_cast<float>(yPos),m_movingSegment);
 	}
 	inline static void Scroll_Callback(GLFWwindow* win, const double xOffset, const double yOffset)
 	{
@@ -31,6 +36,7 @@ private:
 	}
 
 private:
+	inline static int m_movingSegment{ 0 };
 	GLFWwindow* m_window;
 	Camera* m_camera;
 };
