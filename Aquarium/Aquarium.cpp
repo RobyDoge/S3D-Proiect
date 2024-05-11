@@ -69,7 +69,7 @@ int main(int argc, char** argv)
 
     // lighting info
     // -------------
-    constexpr glm::vec3 lightPos(0.0f, 5.0f, 0.0f);
+    constexpr glm::vec3 lightPos(0.0f, 2.0f, 0.0f);
 
 
     glEnable(GL_CULL_FACE);

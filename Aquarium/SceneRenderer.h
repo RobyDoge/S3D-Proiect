@@ -43,4 +43,5 @@ private:
     Textures m_textures;
     std::unordered_map<std::string,Model> m_models;
     Model m_fishModel;
+    Model m_aquariumModel;
 };

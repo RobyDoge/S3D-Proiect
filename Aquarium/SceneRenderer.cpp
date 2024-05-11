@@ -14,11 +14,12 @@ SceneRenderer::SceneRenderer(const string& projectPath) :m_textures{ projectPath
     m_textures.AddTexture("Floor", "Floor.jpg");
     m_textures.AddTexture("Ceiling", "Ceiling.jpg");
     m_textures.AddTexture("Walls", "Walls.jpg");
-    m_textures.AddTexture("aqua", "aqua.jpg");
+    m_textures.AddTexture("AWall", "AquariumWall.png");
 
     CreateProjectPath(projectPath);
 
     m_fishModel= Model(m_projectPath + "\\Models\\Fish\\12265_Fish_v1_L2.obj", false, false);
+    m_aquariumModel = { m_projectPath + "\\Models\\test\\test.obj",false,false };
 }
 
 void SceneRenderer::Init()
@@ -55,13 +56,13 @@ void SceneRenderer::RenderFloor(const Shader& shader, const float deltaTime)
         // set up vertex data (and buffer(s)) and configure vertex attributes
         constexpr float planeVertices[] = {
             // positions            // normals         // texcoords
-            25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
-            -25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
-            -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
+            5.0f, -0.5f, 5.0f, 0.0f, 1.0f, 0.0f, 5.0f, 0.0f,
+            -5.0f, -0.5f, 5.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+            -5.0f, -0.5f, -5.0f, 0.0f, 1.0f, 0.0f, 0.0f, 5.0f,
 
-            25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
-            -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
-            25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 25.0f
+            5.0f, -0.5f, 5.0f, 0.0f, 1.0f, 0.0f, 5.0f, 0.0f,
+            -5.0f, -0.5f, -5.0f, 0.0f, 1.0f, 0.0f, 0.0f, 5.0f,
+            5.0f, -0.5f, -5.0f, 0.0f, 1.0f, 0.0f, 5.0f, 5.0f
         };
         // plane VAO
         glGenVertexArrays(1, &m_planeVao);
@@ -124,6 +125,7 @@ void SceneRenderer::RenderCeiling(const Shader& shader, const float deltaTime)
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
 }
+
 void SceneRenderer::RenderWalls(const Shader& shader, const float deltaTime)
 {
     if (m_wallVao == 0) {
@@ -190,55 +192,42 @@ void SceneRenderer::RenderWalls(const Shader& shader, const float deltaTime)
 
 void SceneRenderer::RenderAquarium(const Shader& shader, const float deltaTime)
 {
-    constexpr float scale_x = 0.5f; // Scalarea pe axa x
-    constexpr float scale_y = 0.3f; // Scalarea pe axa y
-    constexpr float scale_z = 0.7f; // Scalarea pe axa z
-
     if (m_aquariumVao == 0) {
+        constexpr float scaleZ = 1.5;
+        constexpr float scaleY = 0.75;
+        constexpr float scaleX = 1.5;
         // Define vertex data for a cube
         constexpr float aquariumVertices[] = {
             // Poziții scalate cu factorul scale    // Normale scalate         // Coordonate textură
-            -1.0f * scale_x, -1.0f * scale_y, -1.0f * scale_z,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f,
-             1.0f * scale_x, -1.0f * scale_y, -1.0f * scale_z,  0.0f, 0.0f, -1.0f,  1.0f, 0.0f,
-             1.0f * scale_x,  1.0f * scale_y, -1.0f * scale_z,  0.0f, 0.0f, -1.0f,  1.0f, 1.0f,
-             1.0f * scale_x,  1.0f * scale_y, -1.0f * scale_z,  0.0f, 0.0f, -1.0f,  1.0f, 1.0f,
-            -1.0f * scale_x,  1.0f * scale_y, -1.0f * scale_z,  0.0f, 0.0f, -1.0f,  0.0f, 1.0f,
-            -1.0f * scale_x, -1.0f * scale_y, -1.0f * scale_z,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f,
+            -1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f,
+             1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ,  0.0f, 0.0f, -1.0f,  1.0f, 0.0f,
+             1.0f * scaleX,  1.0f * scaleY, -1.0f * scaleZ,  0.0f, 0.0f, -1.0f,  1.0f, 1.0f,
+             1.0f * scaleX,  1.0f * scaleY, -1.0f * scaleZ,  0.0f, 0.0f, -1.0f,  1.0f, 1.0f,
+            -1.0f * scaleX,  1.0f * scaleY, -1.0f * scaleZ,  0.0f, 0.0f, -1.0f,  0.0f, 1.0f,
+            -1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f,
 
-            -1.0f * scale_x, -1.0f * scale_y,  1.0f * scale_z,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
-             1.0f * scale_x, -1.0f * scale_y,  1.0f * scale_z,  0.0f, 0.0f,  1.0f,  1.0f, 0.0f,
-             1.0f * scale_x,  1.0f * scale_y,  1.0f * scale_z,  0.0f, 0.0f,  1.0f,  1.0f, 1.0f,
-             1.0f * scale_x,  1.0f * scale_y,  1.0f * scale_z,  0.0f, 0.0f,  1.0f,  1.0f, 1.0f,
-            -1.0f * scale_x,  1.0f * scale_y,  1.0f * scale_z,  0.0f, 0.0f,  1.0f,  0.0f, 1.0f,
-            -1.0f * scale_x, -1.0f * scale_y,  1.0f * scale_z,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
+            -1.0f * scaleX, -1.0f * scaleY,  1.0f * scaleZ,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
+             1.0f * scaleX, -1.0f * scaleY,  1.0f * scaleZ,  0.0f, 0.0f,  1.0f,  1.0f, 0.0f,
+             1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ,  0.0f, 0.0f,  1.0f,  1.0f, 1.0f,
+             1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ,  0.0f, 0.0f,  1.0f,  1.0f, 1.0f,
+            -1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ,  0.0f, 0.0f,  1.0f,  0.0f, 1.0f,
+            -1.0f * scaleX, -1.0f * scaleY,  1.0f * scaleZ,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
 
-            -1.0f * scale_x,  1.0f * scale_y,  1.0f * scale_z, -1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
-            -1.0f * scale_x,  1.0f * scale_y, -1.0f * scale_z, -1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
-            -1.0f * scale_x, -1.0f * scale_y, -1.0f * scale_z, -1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
-            -1.0f * scale_x, -1.0f * scale_y, -1.0f * scale_z, -1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
-            -1.0f * scale_x, -1.0f * scale_y,  1.0f * scale_z, -1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
-            -1.0f * scale_x,  1.0f * scale_y,  1.0f * scale_z, -1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
+            -1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ, -1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
+            -1.0f * scaleX,  1.0f * scaleY, -1.0f * scaleZ, -1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
+            -1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ, -1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
+            -1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ, -1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
+            -1.0f * scaleX, -1.0f * scaleY,  1.0f * scaleZ, -1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
+            -1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ, -1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
 
-             1.0f * scale_x,  1.0f * scale_y,  1.0f * scale_z,  1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
-             1.0f * scale_x,  1.0f * scale_y, -1.0f * scale_z,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
-             1.0f * scale_x, -1.0f * scale_y, -1.0f * scale_z,  1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
-             1.0f * scale_x, -1.0f * scale_y, -1.0f * scale_z,  1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
-             1.0f * scale_x, -1.0f * scale_y,  1.0f * scale_z,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
-             1.0f * scale_x,  1.0f * scale_y,  1.0f * scale_z,  1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
+             1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
+             1.0f * scaleX,  1.0f * scaleY, -1.0f * scaleZ,  1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
+             1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
+             1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
+             1.0f * scaleX, -1.0f * scaleY,  1.0f * scaleZ,  1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
+             1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
 
-            -1.0f * scale_x, -1.0f * scale_y, -1.0f * scale_z,  0.0f, -1.0f, 0.0f,  0.0f, 1.0f,
-             1.0f * scale_x, -1.0f * scale_y, -1.0f * scale_z,  0.0f, -1.0f, 0.0f,  1.0f, 1.0f,
-             1.0f * scale_x, -1.0f * scale_y,  1.0f * scale_z,  0.0f, -1.0f, 0.0f,  1.0f, 0.0f,
-             1.0f * scale_x, -1.0f * scale_y,  1.0f * scale_z,  0.0f, -1.0f, 0.0f,  1.0f, 0.0f,
-            -1.0f * scale_x, -1.0f * scale_y,  1.0f * scale_z,  0.0f, -1.0f, 0.0f,  0.0f, 0.0f,
-            -1.0f * scale_x, -1.0f * scale_y, -1.0f * scale_z,  0.0f, -1.0f, 0.0f,  0.0f, 1.0f,
 
-            -1.0f * scale_x,  1.0f * scale_y, -1.0f * scale_z,  0.0f,  1.0f, 0.0f,  0.0f, 1.0f,
-             1.0f * scale_x,  1.0f * scale_y, -1.0f * scale_z,  0.0f,  1.0f, 0.0f,  1.0f, 1.0f,
-             1.0f * scale_x,  1.0f * scale_y,  1.0f * scale_z,  0.0f,  1.0f, 0.0f,  1.0f, 0.0f,
-             1.0f * scale_x,  1.0f * scale_y,  1.0f * scale_z,  0.0f,  1.0f, 0.0f,  1.0f, 0.0f,
-            -1.0f * scale_x,  1.0f * scale_y,  1.0f * scale_z,  0.0f,  1.0f, 0.0f,  0.0f, 0.0f,
-            -1.0f * scale_x,  1.0f * scale_y, -1.0f * scale_z,  0.0f,  1.0f, 0.0f,  0.0f, 1.0f
         };
 
 
@@ -259,11 +248,11 @@ void SceneRenderer::RenderAquarium(const Shader& shader, const float deltaTime)
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float)));
         glEnableVertexAttribArray(2);
     }
-
-    // Bind textura
+    //// Bind textura
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_textures.GetTexture("aqua"));
+    glBindTexture(GL_TEXTURE_2D, m_textures.GetTexture("AWall"));
 
+    
     // Renderea cubului
     glBindVertexArray(m_aquariumVao);
     glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -336,7 +325,7 @@ void SceneRenderer::RenderFish(const Shader& shader, float deltaTime)
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float)));
         glEnableVertexAttribArray(2);
     }
-    glm::mat4 fishModel = glm::scale(glm::mat4(1.0), glm::vec3(0.1f));
+    glm::mat4 fishModel = glm::scale(glm::mat4(1.0), glm::vec3(0.01f));
     fishModel = glm::rotate(fishModel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         
     shader.SetMat4("model", fishModel);
