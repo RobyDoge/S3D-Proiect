@@ -24,6 +24,8 @@ private:
     void RenderWalls(const Shader& shader, float deltaTime);
     void RenderAquarium(const Shader& shader, float deltaTime);
     void RenderFish(const Shader& shader, float deltaTime);
+    void RenderCoralFish(const Shader& shader, float deltaTime);
+    void RenderStarfish(const Shader& shader, float deltaTime);
 
 private:
     unsigned int m_ceilingVao{ 0 };
@@ -36,6 +38,10 @@ private:
     unsigned int m_aquariumVbo{ 0 };
     unsigned int m_fishVao{ 0 };
     unsigned int m_fishVbo{ 0 };
+    unsigned int m_coralFishVao{ 0 };
+    unsigned int m_coralFishVbo{ 0 };
+    unsigned int m_starfishVao{ 0 };
+    unsigned int m_starfishVbo{ 0 };
 
 private:
     std::string m_projectPath;
@@ -44,4 +50,6 @@ private:
     std::unordered_map<std::string,Model> m_models;
     Model m_fishModel;
     Model m_aquariumModel;
+    Model m_coralFishModel;
+    Model m_starfishModel;
 };
