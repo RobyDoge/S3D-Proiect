@@ -19,9 +19,8 @@ SceneRenderer::SceneRenderer(const string& projectPath) :m_textures{ projectPath
     CreateProjectPath(projectPath);
 
     m_fishModel= Model(m_projectPath + "\\Models\\Fish\\12265_Fish_v1_L2.obj", false, false);
-    m_aquariumModel = { m_projectPath + "\\Models\\test\\test.obj",false,false };
     m_coralFishModel = Model(m_projectPath + "\\Models\\Coral_Beauty_Angelfish\\13009_Coral_Beauty_Angelfish_v1_l3.obj", false, false);
-    m_starfishModel = Model(m_projectPath + "\\Models\\Starfish\\18764_Common_N_Atlantic_Starfish_v1.obj", false, false);
+  //  m_starfishModel = Model(m_projectPath + "\\Models\\Starfish\\18764_Common_N_Atlantic_Starfish_v1.obj", false, false);
 }
 
 void SceneRenderer::Init()
