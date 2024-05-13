@@ -51,7 +51,7 @@ private:
     Textures m_textures;
     std::unordered_map<std::string,Model> m_models;
     float fishRadius = 0.5f; 
-    float fishSpeed = 0.5f; 
+    float fishSpeed = 0.05f; 
     float fishAngle = 0.0f; 
     glm::vec3 fishPosition = glm::vec3(0.0f, 0.0f, 0.0f);
     Model m_fishModel;
