@@ -20,7 +20,7 @@ SceneRenderer::SceneRenderer(const string& projectPath) :m_textures{ projectPath
 
     m_fishModel= Model(m_projectPath + "\\Models\\Fish\\12265_Fish_v1_L2.obj", false, false);
     m_coralFishModel = Model(m_projectPath + "\\Models\\Coral_Beauty_Angelfish\\13009_Coral_Beauty_Angelfish_v1_l3.obj", false, false);
-  
+    m_castle = { m_projectPath + "\\Models\\Aquarium_Castle\\13020_Aquarium_Castle_v1_L1.obj",false,false };
 }
 
 void SceneRenderer::Init()
@@ -28,11 +28,11 @@ void SceneRenderer::Init()
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderCeiling(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) { RenderFloor(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderAquariumFloor(shader, deltaTime); });
-
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) { RenderWalls(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderFish(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderCoralFish(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderStarfish(shader, deltaTime); });
+    m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderCastle(shader, deltaTime); });
 }
 
 void SceneRenderer::Render(const Shader& shader, const float deltaTime) const
@@ -133,7 +133,6 @@ void SceneRenderer::CreateProjectPath(const string& string)
     m_projectPath = string.substr(0, string.find_last_of('\\', string.find_last_of(R"(\)") - 1));
     m_projectPath = m_projectPath.substr(0, m_projectPath.find_last_of(R"(\)"));
 }
-
 
 void SceneRenderer::RenderFloor(const Shader& shader, const float deltaTime)
 {
@@ -312,69 +311,6 @@ void SceneRenderer::RenderAquariumFloor(const Shader& shader, float deltaTime)
 
 void SceneRenderer::RenderFish(const Shader& shader, float deltaTime)
 {
-    
-    if (m_fishVao == 0) {
-        // Define vertex data for a cube
-        constexpr float aquariumVertices[] = {
-            // Poziții scalate cu factorul scale    // Normale scalate        
-            -1.0f * 1, -1.0f * 1, -1.0f * 1,  0.0f, 0.0f, -1.0f,
-             1.0f * 1, -1.0f * 1, -1.0f * 1,  0.0f, 0.0f, -1.0f,
-             1.0f * 1,  1.0f * 1, -1.0f * 1,  0.0f, 0.0f, -1.0f,
-             1.0f * 1,  1.0f * 1, -1.0f * 1,  0.0f, 0.0f, -1.0f,
-            -1.0f * 1,  1.0f * 1, -1.0f * 1,  0.0f, 0.0f, -1.0f,
-            -1.0f * 1, -1.0f * 1, -1.0f * 1,  0.0f, 0.0f, -1.0f,
-
-            -1.0f * 1, -1.0f * 1,  1.0f * 1,  0.0f, 0.0f,  1.0f,
-             1.0f * 1, -1.0f * 1,  1.0f * 1,  0.0f, 0.0f,  1.0f,
-             1.0f * 1,  1.0f * 1,  1.0f * 1,  0.0f, 0.0f,  1.0f,
-             1.0f * 1,  1.0f * 1,  1.0f * 1,  0.0f, 0.0f,  1.0f,
-            -1.0f * 1,  1.0f * 1,  1.0f * 1,  0.0f, 0.0f,  1.0f,
-            -1.0f * 1, -1.0f * 1,  1.0f * 1,  0.0f, 0.0f,  1.0f,
-
-            -1.0f * 1,  1.0f * 1,  1.0f * 1, -1.0f, 0.0f, 0.0f,
-            -1.0f * 1,  1.0f * 1, -1.0f * 1, -1.0f, 0.0f, 0.0f,
-            -1.0f * 1, -1.0f * 1, -1.0f * 1, -1.0f, 0.0f, 0.0f,
-            -1.0f * 1, -1.0f * 1, -1.0f * 1, -1.0f, 0.0f, 0.0f,
-            -1.0f * 1, -1.0f * 1,  1.0f * 1, -1.0f, 0.0f, 0.0f,
-            -1.0f * 1,  1.0f * 1,  1.0f * 1, -1.0f, 0.0f, 0.0f,
-
-             1.0f * 1,  1.0f * 1,  1.0f * 1,  1.0f, 0.0f, 0.0f,
-             1.0f * 1,  1.0f * 1, -1.0f * 1,  1.0f, 0.0f, 0.0f,
-             1.0f * 1, -1.0f * 1, -1.0f * 1,  1.0f, 0.0f, 0.0f,
-             1.0f * 1, -1.0f * 1, -1.0f * 1,  1.0f, 0.0f, 0.0f,
-             1.0f * 1, -1.0f * 1,  1.0f * 1,  1.0f, 0.0f, 0.0f,
-             1.0f * 1,  1.0f * 1,  1.0f * 1,  1.0f, 0.0f, 0.0f,
-
-            -1.0f * 1, -1.0f * 1, -1.0f * 1,  0.0f, -1.0f, 0.0f,
-             1.0f * 1, -1.0f * 1, -1.0f * 1,  0.0f, -1.0f, 0.0f,
-             1.0f * 1, -1.0f * 1,  1.0f * 1,  0.0f, -1.0f, 0.0f,
-             1.0f * 1, -1.0f * 1,  1.0f * 1,  0.0f, -1.0f, 0.0f,
-            -1.0f * 1, -1.0f * 1,  1.0f * 1,  0.0f, -1.0f, 0.0f,
-            -1.0f * 1, -1.0f * 1, -1.0f * 1,  0.0f, -1.0f, 0.0f,
-
-            -1.0f * 1,  1.0f * 1, -1.0f * 1,  0.0f,  1.0f, 0.0f,
-             1.0f * 1,  1.0f * 1, -1.0f * 1,  0.0f,  1.0f, 0.0f,
-             1.0f * 1,  1.0f * 1,  1.0f * 1,  0.0f,  1.0f, 0.0f,
-             1.0f * 1,  1.0f * 1,  1.0f * 1,  0.0f,  1.0f, 0.0f,
-            -1.0f * 1,  1.0f * 1,  1.0f * 1,  0.0f,  1.0f, 0.0f,
-            -1.0f * 1,  1.0f * 1, -1.0f * 1,  0.0f,  1.0f, 0.0f,
-        };
-        glGenVertexArrays(1, &m_fishVao);
-        glGenBuffers(1, &m_fishVbo);
-        glBindVertexArray(m_fishVao);
-        glBindBuffer(GL_ARRAY_BUFFER, m_fishVbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(aquariumVertices), aquariumVertices, GL_STATIC_DRAW);
-
-        // Atributul pentru poziție
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), static_cast<void*>(nullptr));
-        glEnableVertexAttribArray(0);
-        // Atributul pentru normală
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
-        glEnableVertexAttribArray(1);
-        // Atributul pentru coordonate textură
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float)));
-        glEnableVertexAttribArray(2);
-    }
     glm::mat4 fishModel = glm::scale(glm::mat4(1.0), glm::vec3(0.01f));
     fishModel = glm::rotate(fishModel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         
@@ -387,74 +323,6 @@ void SceneRenderer::RenderCoralFish(const Shader& shader, float deltaTime)
     // Declare coralFishModel
     glm::mat4 coralFishModel = glm::scale(glm::mat4(1.0), glm::vec3(0.05f));
     coralFishModel = glm::rotate(coralFishModel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
-    if (m_coralFishVao == 0) {
-        // Define vertex data for a cube
-        constexpr float aquariumVertices[] = {
-            // Poziții scalate cu factorul scale    // Normale scalate        
-
-            // Front face
-            -1.0f - 5.0f, -1.0f + 5.0f, -1.0f,  0.0f, 0.0f, -1.0f,
-            1.0f - 5.0f, -1.0f + 5.0f, -1.0f,  0.0f, 0.0f, -1.0f,
-            1.0f - 5.0f,  1.0f + 5.0f, -1.0f,  0.0f, 0.0f, -1.0f,
-            1.0f - 5.0f,  1.0f + 5.0f, -1.0f,  0.0f, 0.0f, -1.0f,
-            -1.0f - 5.0f,  1.0f + 5.0f, -1.0f,  0.0f, 0.0f, -1.0f,
-            -1.0f - 5.0f, -1.0f + 5.0f, -1.0f,  0.0f, 0.0f, -1.0f,
-
-            // Back face
-            -1.0f - 5.0f, -1.0f + 5.0f,  1.0f,  0.0f, 0.0f,  1.0f,
-            1.0f - 5.0f, -1.0f + 5.0f,  1.0f,  0.0f, 0.0f,  1.0f,
-            1.0f - 5.0f,  1.0f + 5.0f,  1.0f,  0.0f, 0.0f,  1.0f,
-            1.0f - 5.0f,  1.0f + 5.0f,  1.0f,  0.0f, 0.0f,  1.0f,
-            -1.0f - 5.0f,  1.0f + 5.0f,  1.0f,  0.0f, 0.0f,  1.0f,
-            -1.0f - 5.0f, -1.0f + 5.0f,  1.0f,  0.0f, 0.0f,  1.0f,
-
-            // Left face
-            -1.0f - 5.0f,  1.0f + 5.0f,  1.0f, -1.0f, 0.0f, 0.0f,
-            -1.0f - 5.0f,  1.0f + 5.0f, -1.0f, -1.0f, 0.0f, 0.0f,
-            -1.0f - 5.0f, -1.0f + 5.0f, -1.0f, -1.0f, 0.0f, 0.0f,
-            -1.0f - 5.0f, -1.0f + 5.0f, -1.0f, -1.0f, 0.0f, 0.0f,
-            -1.0f - 5.0f, -1.0f + 5.0f,  1.0f, -1.0f, 0.0f, 0.0f,
-            -1.0f - 5.0f,  1.0f + 5.0f,  1.0f, -1.0f, 0.0f, 0.0f,
-
-            // Right face
-            1.0f - 5.0f,  1.0f + 5.0f,  1.0f,  1.0f, 0.0f, 0.0f,
-            1.0f - 5.0f,  1.0f + 5.0f, -1.0f,  1.0f, 0.0f, 0.0f,
-            1.0f - 5.0f, -1.0f + 5.0f, -1.0f,  1.0f, 0.0f, 0.0f,
-            1.0f - 5.0f, -1.0f + 5.0f, -1.0f,  1.0f, 0.0f, 0.0f,
-            1.0f - 5.0f, -1.0f + 5.0f,  1.0f,  1.0f, 0.0f, 0.0f,
-            1.0f - 5.0f,  1.0f + 5.0f,  1.0f,  1.0f, 0.0f, 0.0f,
-
-            // Bottom face
-            -1.0f - 5.0f, -1.0f + 5.0f, -1.0f,  0.0f, -1.0f, 0.0f,
-            1.0f - 5.0f, -1.0f + 5.0f, -1.0f,  0.0f, -1.0f, 0.0f,
-            1.0f - 5.0f, -1.0f + 5.0f,  1.0f,  0.0f, -1.0f, 0.0f,
-            1.0f - 5.0f, -1.0f + 5.0f,  1.0f,  0.0f, -1.0f, 0.0f,
-            -1.0f - 5.0f, -1.0f + 5.0f,  1.0f,  0.0f, -1.0f, 0.0f,
-            -1.0f - 5.0f, -1.0f + 5.0f, -1.0f,  0.0f, -1.0f, 0.0f,
-
-            // Top face
-            -1.0f - 5.0f,  1.0f + 5.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-            1.0f - 5.0f,  1.0f + 5.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-            1.0f - 5.0f,  1.0f + 5.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-            1.0f - 5.0f,  1.0f + 5.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-            -1.0f - 5.0f,  1.0f + 5.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-            -1.0f - 5.0f,  1.0f + 5.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-        };
-
-        glGenVertexArrays(1, &m_coralFishVao);
-        glGenBuffers(1, &m_coralFishVbo);
-        glBindVertexArray(m_coralFishVao);
-        glBindBuffer(GL_ARRAY_BUFFER, m_coralFishVbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(aquariumVertices), aquariumVertices, GL_STATIC_DRAW);
-
-        // Atributul pentru poziție
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), static_cast<void*>(nullptr));
-        glEnableVertexAttribArray(0);
-        // Atributul pentru normală
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
-        glEnableVertexAttribArray(1);
-    }
 
     shader.SetMat4("model", coralFishModel);
     m_coralFishModel.Draw(shader);
@@ -538,4 +406,20 @@ void SceneRenderer::RenderStarfish(const Shader& shader, float deltaTime)
 
     shader.SetMat4("model", starfish);
     m_coralFishModel.Draw(shader);
+}
+
+void SceneRenderer::RenderCastle(const Shader& shader, float deltaTime)
+{
+    glm::mat4 castle = scale(glm::mat4(1.0), glm::vec3(.025f));
+    castle = rotate(castle, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    castle = translate(castle, glm::vec3(40.0f, 20.f, -20.0f));
+    shader.SetMat4("model", castle);
+    m_castle.Draw(shader);
+
+    castle = scale(glm::mat4(1.0), glm::vec3(.05f));
+    castle = rotate(castle, glm::radians(-90.0f), glm::vec3(1.0f, 0.f, 0.0f));
+    castle = rotate(castle, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    castle = translate(castle, glm::vec3(20.0f, 15.f, -10.0f));
+    shader.SetMat4("model", castle);
+    m_castle.Draw(shader);
 }

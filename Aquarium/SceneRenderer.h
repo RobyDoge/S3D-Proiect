@@ -27,6 +27,7 @@ private:
     void RenderFish(const Shader& shader, float deltaTime);
     void RenderCoralFish(const Shader& shader, float deltaTime);
     void RenderStarfish(const Shader& shader, float deltaTime);
+    void RenderCastle(const Shader& shader, float deltaTime);
 
 private:
     unsigned int m_ceilingVao{ 0 };
@@ -37,10 +38,6 @@ private:
     unsigned int m_wallVbo{ 0 };
     unsigned int m_aquariumVao{ 0 };
     unsigned int m_aquariumVbo{ 0 };
-    unsigned int m_fishVao{ 0 };
-    unsigned int m_fishVbo{ 0 };
-    unsigned int m_coralFishVao{ 0 };
-    unsigned int m_coralFishVbo{ 0 };
     unsigned int m_starfishVao{ 0 };
     unsigned int m_starfishVbo{ 0 };
     unsigned int m_aquariumFloorVbo{ 0 };
@@ -55,4 +52,5 @@ private:
     Model m_aquariumModel;
     Model m_coralFishModel;
     Model m_starfishModel;
+    Model m_castle;
 };
