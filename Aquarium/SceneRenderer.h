@@ -31,6 +31,7 @@ private:
     void RenderBlueGreenFish(const Shader& shader, float deltaTime);
     void RenderRedCoral(const Shader& shader, float deltaTime);
     void RenderBlueTangFish(const Shader& shader, float deltaTime);
+    void RenderCat(const Shader& shader, float deltaTime);
     void UpdateFishPosition(float deltaTime);
 
 private:
@@ -62,4 +63,5 @@ private:
     Model m_bgFish;
     Model m_redCoral;
     Model m_btFish;
+    Model m_cat;
 };

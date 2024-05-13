@@ -25,6 +25,7 @@ SceneRenderer::SceneRenderer(const string& projectPath) :m_textures{ projectPath
     m_bgFish = { m_projectPath + "\\Models\\BlueGreen_Fish\\13007_Blue-Green_Reef_Chromis_v2_l3.obj",false,false };
     m_redCoral = { m_projectPath + "\\Models\\Red_Coral\\10010_Coral_v1_L3.obj",false,false };
     m_btFish = { m_projectPath + "\\Models\\BlueTang_Fish\\13006_Blue_Tang_v1_l3.obj",false,false };
+    m_cat = { m_projectPath + "\\Models\\Cat\\12221_Cat_v1_l3.obj",false,false };
 }
 
 void SceneRenderer::Init()
@@ -40,6 +41,7 @@ void SceneRenderer::Init()
     m_renderers.emplace_back([this] (const Shader& shader, const float deltaTime) { RenderBlueGreenFish(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderRedCoral(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderBlueTangFish(shader, deltaTime); });
+    m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderCat(shader, deltaTime); });
 }
 
 void SceneRenderer::Render(const Shader& shader, const float deltaTime) const
@@ -401,6 +403,19 @@ void SceneRenderer::RenderBlueTangFish(const Shader& shader, float deltaTime)
     m_btFish.Draw(shader);
 }
 
+void SceneRenderer::RenderCat(const Shader& shader, float deltaTime)
+{
+    glm::mat4 catModel = glm::mat4(1.0f);
+
+    catModel = glm::translate(catModel, glm::vec3(2.2f, -0.49f, 0.0f));
+
+    catModel = glm::rotate(catModel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+    catModel = glm::scale(catModel, glm::vec3(0.03f));
+
+    shader.SetMat4("model", catModel);
+    m_cat.Draw(shader);
+}
 
 
 void SceneRenderer::RenderCastle(const Shader& shader, float deltaTime)
