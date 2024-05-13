@@ -14,13 +14,13 @@ SceneRenderer::SceneRenderer(const string& projectPath) :m_textures{ projectPath
     m_textures.AddTexture("Floor", "Floor.jpg");
     m_textures.AddTexture("Ceiling", "Ceiling.jpg");
     m_textures.AddTexture("Walls", "Walls.jpg");
-    m_textures.AddTexture("AWall", "AquariumWall.png");
+    m_textures.AddTexture("Water", "glass.png");
 
     CreateProjectPath(projectPath);
 
     m_fishModel= Model(m_projectPath + "\\Models\\Fish\\12265_Fish_v1_L2.obj", false, false);
     m_coralFishModel = Model(m_projectPath + "\\Models\\Coral_Beauty_Angelfish\\13009_Coral_Beauty_Angelfish_v1_l3.obj", false, false);
-  //  m_starfishModel = Model(m_projectPath + "\\Models\\Starfish\\18764_Common_N_Atlantic_Starfish_v1.obj", false, false);
+  
 }
 
 void SceneRenderer::Init()
@@ -28,11 +28,9 @@ void SceneRenderer::Init()
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderCeiling(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) { RenderFloor(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) { RenderWalls(shader, deltaTime); });
-    m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderAquarium(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderFish(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderCoralFish(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderStarfish(shader, deltaTime); });
-
 
 }
 
@@ -44,6 +42,88 @@ void SceneRenderer::Render(const Shader& shader, const float deltaTime) const
     {
         render(shader, deltaTime);
     }
+}
+
+void SceneRenderer::RenderWater(const Shader& shader, float deltaTime)
+{
+    if (m_aquariumVao == 0) {
+        constexpr float scaleZ = 1.5;
+        constexpr float scaleY = 1;
+        constexpr float scaleX = 1.5;
+        // Define vertex data for a cube
+        constexpr float aquariumVertices[] = {
+            // Poziții scalate cu factorul scale    // Normale scalate         // Coordonate textură
+            -1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f,
+             1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ,  0.0f, 0.0f, -1.0f,  1.0f, 0.0f,
+             1.0f * scaleX,  1.0f * scaleY, -1.0f * scaleZ,  0.0f, 0.0f, -1.0f,  1.0f, 1.0f,
+             1.0f * scaleX,  1.0f * scaleY, -1.0f * scaleZ,  0.0f, 0.0f, -1.0f,  1.0f, 1.0f,
+            -1.0f * scaleX,  1.0f * scaleY, -1.0f * scaleZ,  0.0f, 0.0f, -1.0f,  0.0f, 1.0f,
+            -1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f,
+
+            -1.0f * scaleX, -1.0f * scaleY,  1.0f * scaleZ,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
+             1.0f * scaleX, -1.0f * scaleY,  1.0f * scaleZ,  0.0f, 0.0f,  1.0f,  1.0f, 0.0f,
+             1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ,  0.0f, 0.0f,  1.0f,  1.0f, 1.0f,
+             1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ,  0.0f, 0.0f,  1.0f,  1.0f, 1.0f,
+            -1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ,  0.0f, 0.0f,  1.0f,  0.0f, 1.0f,
+            -1.0f * scaleX, -1.0f * scaleY,  1.0f * scaleZ,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
+
+            -1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ, -1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
+            -1.0f * scaleX,  1.0f * scaleY, -1.0f * scaleZ, -1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
+            -1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ, -1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
+            -1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ, -1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
+            -1.0f * scaleX, -1.0f * scaleY,  1.0f * scaleZ, -1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
+            -1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ, -1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
+
+             1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
+             1.0f * scaleX,  1.0f * scaleY, -1.0f * scaleZ,  1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
+             1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
+             1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
+             1.0f * scaleX, -1.0f * scaleY,  1.0f * scaleZ,  1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
+             1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
+
+            -1.0f * scaleX, 1.0f * scaleY, -1.0f * scaleZ, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+            1.0f * scaleX, 1.0f * scaleY, -1.0f * scaleZ, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+            1.0f * scaleX, 1.0f * scaleY, 1.0f * scaleZ, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+            1.0f * scaleX, 1.0f * scaleY, 1.0f * scaleZ, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+            -1.0f * scaleX, 1.0f * scaleY, 1.0f * scaleZ, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+            -1.0f * scaleX, 1.0f * scaleY, -1.0f * scaleZ, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
+
+        };
+
+
+        // Generarea VAO și VBO
+        glGenVertexArrays(1, &m_aquariumVao);
+        glGenBuffers(1, &m_aquariumVbo);
+        glBindVertexArray(m_aquariumVao);
+        glBindBuffer(GL_ARRAY_BUFFER, m_aquariumVbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(aquariumVertices), aquariumVertices, GL_STATIC_DRAW);
+
+        // Atributul pentru poziție
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), static_cast<void*>(nullptr));
+        glEnableVertexAttribArray(0);
+        // Atributul pentru normală
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
+        // Atributul pentru coordonate textură
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float)));
+        glEnableVertexAttribArray(2);
+    }
+
+    constexpr glm::mat4 model{ 1 };
+    shader.SetMat4("model", model);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_textures.GetTexture("Water"));
+
+    glBindVertexArray(m_aquariumVao);
+
+
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glBindVertexArray(0);
+
 }
 
 void SceneRenderer::CreateProjectPath(const string& string)
@@ -194,75 +274,6 @@ void SceneRenderer::RenderWalls(const Shader& shader, const float deltaTime)
     glBindVertexArray(0);
 }
 
-void SceneRenderer::RenderAquarium(const Shader& shader, const float deltaTime)
-{
-    if (m_aquariumVao == 0) {
-        constexpr float scaleZ = 1.5;
-        constexpr float scaleY = 0.75;
-        constexpr float scaleX = 1.5;
-        // Define vertex data for a cube
-        constexpr float aquariumVertices[] = {
-            // Poziții scalate cu factorul scale    // Normale scalate         // Coordonate textură
-            -1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f,
-             1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ,  0.0f, 0.0f, -1.0f,  1.0f, 0.0f,
-             1.0f * scaleX,  1.0f * scaleY, -1.0f * scaleZ,  0.0f, 0.0f, -1.0f,  1.0f, 1.0f,
-             1.0f * scaleX,  1.0f * scaleY, -1.0f * scaleZ,  0.0f, 0.0f, -1.0f,  1.0f, 1.0f,
-            -1.0f * scaleX,  1.0f * scaleY, -1.0f * scaleZ,  0.0f, 0.0f, -1.0f,  0.0f, 1.0f,
-            -1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f,
-
-            -1.0f * scaleX, -1.0f * scaleY,  1.0f * scaleZ,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
-             1.0f * scaleX, -1.0f * scaleY,  1.0f * scaleZ,  0.0f, 0.0f,  1.0f,  1.0f, 0.0f,
-             1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ,  0.0f, 0.0f,  1.0f,  1.0f, 1.0f,
-             1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ,  0.0f, 0.0f,  1.0f,  1.0f, 1.0f,
-            -1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ,  0.0f, 0.0f,  1.0f,  0.0f, 1.0f,
-            -1.0f * scaleX, -1.0f * scaleY,  1.0f * scaleZ,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
-
-            -1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ, -1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
-            -1.0f * scaleX,  1.0f * scaleY, -1.0f * scaleZ, -1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
-            -1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ, -1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
-            -1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ, -1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
-            -1.0f * scaleX, -1.0f * scaleY,  1.0f * scaleZ, -1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
-            -1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ, -1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
-
-             1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
-             1.0f * scaleX,  1.0f * scaleY, -1.0f * scaleZ,  1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
-             1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
-             1.0f * scaleX, -1.0f * scaleY, -1.0f * scaleZ,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
-             1.0f * scaleX, -1.0f * scaleY,  1.0f * scaleZ,  1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
-             1.0f * scaleX,  1.0f * scaleY,  1.0f * scaleZ,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
-
-
-        };
-
-
-        // Generarea VAO și VBO
-        glGenVertexArrays(1, &m_aquariumVao);
-        glGenBuffers(1, &m_aquariumVbo);
-        glBindVertexArray(m_aquariumVao);
-        glBindBuffer(GL_ARRAY_BUFFER, m_aquariumVbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(aquariumVertices), aquariumVertices, GL_STATIC_DRAW);
-
-        // Atributul pentru poziție
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), static_cast<void*>(nullptr));
-        glEnableVertexAttribArray(0);
-        // Atributul pentru normală
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
-        glEnableVertexAttribArray(1);
-        // Atributul pentru coordonate textură
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float)));
-        glEnableVertexAttribArray(2);
-    }
-    //// Bind textura
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_textures.GetTexture("AWall"));
-
-    
-    // Renderea cubului
-    glBindVertexArray(m_aquariumVao);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
-
-}
 
 void SceneRenderer::RenderFish(const Shader& shader, float deltaTime)
 {
@@ -335,6 +346,7 @@ void SceneRenderer::RenderFish(const Shader& shader, float deltaTime)
     shader.SetMat4("model", fishModel);
     m_fishModel.Draw(shader);
 }
+
 void SceneRenderer::RenderCoralFish(const Shader& shader, float deltaTime)
 {
     // Declare coralFishModel

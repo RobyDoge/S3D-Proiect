@@ -27,6 +27,7 @@ int main(int argc, char** argv)
 
     const Shader shadowMappingShader("Shaders\\ShadowMapping.vs", "Shaders\\ShadowMapping.fs");
     const Shader shadowMappingDepthShader("Shaders\\ShadowMappingDepth.vs", "Shaders\\ShadowMappingDepth.fs");
+    const Shader waterShader("Shaders\\WaterShader.vs", "Shaders\\WaterShader.fs");
 
     // create a framebuffer object + textures
     SceneRenderer scene_renderer = { argv[0] };
@@ -129,6 +130,12 @@ int main(int argc, char** argv)
         glBindTexture(GL_TEXTURE_2D, depthMap);
         glDisable(GL_CULL_FACE);
         scene_renderer.Render(shadowMappingShader, deltaTime);
+
+
+        waterShader.Use();
+        waterShader.SetMat4("projection", projection);
+        waterShader.SetMat4("view", view);
+        scene_renderer.RenderWater(waterShader, deltaTime);
 
         glfwSwapBuffers(window->GetWindow());
         glfwPollEvents();

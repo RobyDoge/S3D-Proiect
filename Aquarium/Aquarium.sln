@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shaders", "Shaders", "{AA18
 		Shaders\ShadowMapping.vs = Shaders\ShadowMapping.vs
 		Shaders\ShadowMappingDepth.fs = Shaders\ShadowMappingDepth.fs
 		Shaders\ShadowMappingDepth.vs = Shaders\ShadowMappingDepth.vs
+		Shaders\WaterShader.fs = Shaders\WaterShader.fs
+		Shaders\WaterShader.vs = Shaders\WaterShader.vs
 	EndProjectSection
 EndProject
 Global

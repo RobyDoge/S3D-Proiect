@@ -14,6 +14,7 @@ public:
     ~SceneRenderer() = default;
     void Init();
     void Render(const Shader& shader, float deltaTime) const;
+    void RenderWater(const Shader& shader, float deltaTime);
 
 private:
     void CreateProjectPath(const string& string);
