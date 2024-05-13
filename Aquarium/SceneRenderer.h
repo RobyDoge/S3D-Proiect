@@ -14,7 +14,7 @@ public:
     ~SceneRenderer() = default;
     void Init();
     void Render(const Shader& shader, float deltaTime) const;
-    void RenderWater(const Shader& shader, float deltaTime);
+    void RenderWater(const Shader& shader, float deltaTime);    
 
 private:
     void CreateProjectPath(const string& string);
@@ -23,7 +23,7 @@ private:
     void RenderFloor(const Shader& shader, float deltaTime);
     void RenderCeiling(const Shader& shader, float deltaTime);
     void RenderWalls(const Shader& shader, float deltaTime);
-    void RenderAquarium(const Shader& shader, float deltaTime);
+    void RenderAquariumFloor(const Shader& shader, float deltaTime);
     void RenderFish(const Shader& shader, float deltaTime);
     void RenderCoralFish(const Shader& shader, float deltaTime);
     void RenderStarfish(const Shader& shader, float deltaTime);
@@ -43,6 +43,8 @@ private:
     unsigned int m_coralFishVbo{ 0 };
     unsigned int m_starfishVao{ 0 };
     unsigned int m_starfishVbo{ 0 };
+    unsigned int m_aquariumFloorVbo{ 0 };
+    unsigned int m_aquariumFloorVao{ 0 };
 
 private:
     std::string m_projectPath;

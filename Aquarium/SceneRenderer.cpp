@@ -15,7 +15,7 @@ SceneRenderer::SceneRenderer(const string& projectPath) :m_textures{ projectPath
     m_textures.AddTexture("Ceiling", "Ceiling.jpg");
     m_textures.AddTexture("Walls", "Walls.jpg");
     m_textures.AddTexture("Water", "glass.png");
-
+    m_textures.AddTexture("AFloor", "AquariumFloor.jpg");
     CreateProjectPath(projectPath);
 
     m_fishModel= Model(m_projectPath + "\\Models\\Fish\\12265_Fish_v1_L2.obj", false, false);
@@ -27,11 +27,12 @@ void SceneRenderer::Init()
 {
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderCeiling(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) { RenderFloor(shader, deltaTime); });
+    m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderAquariumFloor(shader, deltaTime); });
+
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) { RenderWalls(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderFish(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderCoralFish(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderStarfish(shader, deltaTime); });
-
 }
 
 void SceneRenderer::Render(const Shader& shader, const float deltaTime) const
@@ -171,7 +172,6 @@ void SceneRenderer::RenderFloor(const Shader& shader, const float deltaTime)
 
 }
 
-
 void SceneRenderer::RenderCeiling(const Shader& shader, const float deltaTime)
 {
     if (m_ceilingVao == 0) {
@@ -274,6 +274,41 @@ void SceneRenderer::RenderWalls(const Shader& shader, const float deltaTime)
     glBindVertexArray(0);
 }
 
+void SceneRenderer::RenderAquariumFloor(const Shader& shader, float deltaTime)
+{
+    if (m_aquariumFloorVao == 0) {
+        // set up vertex data (and buffer(s)) and configure vertex attributes
+        constexpr float aFloorVertices[] = {
+            // positions            // normals         // texcoords
+            1.5f, -0.49f, 1.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Dreapta-sus
+            -1.5f, -0.49f, 1.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, // Stânga-sus
+            -1.5f, -0.49f, -1.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, // Stânga-jos
+            1.5f, -0.49f, 1.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Dreapta-sus
+            -1.5f, -0.49f, -1.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, // Stânga-jos
+            1.5f, -0.49f, -1.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f // Dreapta-jos
+
+        };
+        // plane VAO
+        glGenVertexArrays(1, &m_aquariumFloorVao);
+        glGenBuffers(1, &m_aquariumFloorVbo);
+        glBindVertexArray(m_aquariumFloorVao);
+        glBindBuffer(GL_ARRAY_BUFFER, m_aquariumFloorVbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(aFloorVertices), aFloorVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), static_cast<void*>(nullptr));
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float)));
+        glBindVertexArray(0);
+    }
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_textures.GetTexture("AFloor"));
+
+    glBindVertexArray(m_aquariumFloorVao);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+}
 
 void SceneRenderer::RenderFish(const Shader& shader, float deltaTime)
 {
