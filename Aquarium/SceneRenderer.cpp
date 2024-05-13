@@ -52,6 +52,15 @@ void SceneRenderer::Render(const Shader& shader, const float deltaTime) const
     }
 }
 
+void SceneRenderer::UpdateFishPosition(float deltaTime)
+{
+    fishAngle -= fishSpeed * deltaTime;
+
+    float x = fishRadius * cos(fishAngle);
+    float z = fishRadius * sin(fishAngle);
+
+    fishPosition = glm::vec3(x, 0.0f, z);
+}
 void SceneRenderer::RenderWater(const Shader& shader, float deltaTime)
 {
     if (m_aquariumVao == 0) {
@@ -381,8 +390,10 @@ void SceneRenderer::RenderRedCoral(const Shader& shader, float deltaTime)
 
 void SceneRenderer::RenderBlueTangFish(const Shader& shader, float deltaTime)
 {
+    UpdateFishPosition(deltaTime);
+
     glm::mat4 btFishModel = glm::mat4(1.0);
-    btFishModel = glm::translate(btFishModel, glm::vec3(-0.05f, 0.0f, 0.0f)); 
+    btFishModel = glm::translate(btFishModel, fishPosition); // Poziția actualizată a peștelui
     btFishModel = glm::scale(btFishModel, glm::vec3(0.03f));
     btFishModel = glm::rotate(btFishModel, glm::radians(-90.0f), glm::vec3(0.5f, 0.5f, 0.5f));
 

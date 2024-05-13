@@ -31,6 +31,7 @@ private:
     void RenderBlueGreenFish(const Shader& shader, float deltaTime);
     void RenderRedCoral(const Shader& shader, float deltaTime);
     void RenderBlueTangFish(const Shader& shader, float deltaTime);
+    void UpdateFishPosition(float deltaTime);
 
 private:
     unsigned int m_ceilingVao{ 0 };
@@ -49,6 +50,10 @@ private:
     std::vector<std::function<void(const Shader& shader, float deltaTime)>> m_renderers;
     Textures m_textures;
     std::unordered_map<std::string,Model> m_models;
+    float fishRadius = 0.5f; 
+    float fishSpeed = 0.5f; 
+    float fishAngle = 0.0f; 
+    glm::vec3 fishPosition = glm::vec3(0.0f, 0.0f, 0.0f);
     Model m_fishModel;
     Model m_aquariumModel;
     Model m_coralFishModel;
