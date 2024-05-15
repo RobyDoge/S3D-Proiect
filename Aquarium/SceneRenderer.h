@@ -33,7 +33,7 @@ private:
     void RenderBlueTangFish(const Shader& shader, float deltaTime);
     void RenderCat(const Shader& shader, float deltaTime);
     void UpdateFishPosition(float deltaTime);
-
+    void RenderSeaweed(const Shader& shader, float deltaTime);
 private:
     unsigned int m_ceilingVao{ 0 };
     unsigned int m_ceilingVbo{ 0 };
@@ -64,4 +64,5 @@ private:
     Model m_redCoral;
     Model m_btFish;
     Model m_cat;
+    Model m_Seaweed;
 };

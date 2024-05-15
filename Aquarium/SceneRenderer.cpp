@@ -26,6 +26,7 @@ SceneRenderer::SceneRenderer(const string& projectPath) :m_textures{ projectPath
     m_redCoral = { m_projectPath + "\\Models\\Red_Coral\\10010_Coral_v1_L3.obj",false,false };
     m_btFish = { m_projectPath + "\\Models\\BlueTang_Fish\\13006_Blue_Tang_v1_l3.obj",false,false };
     m_cat = { m_projectPath + "\\Models\\Cat\\12221_Cat_v1_l3.obj",false,false };
+    m_Seaweed = { m_projectPath + "\\Models\\Seaweed\\2301153_seaweedList.obj",false,false };
 }
 
 void SceneRenderer::Init()
@@ -42,6 +43,7 @@ void SceneRenderer::Init()
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderRedCoral(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderBlueTangFish(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderCat(shader, deltaTime); });
+    m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderSeaweed(shader, deltaTime); });
 }
 
 void SceneRenderer::Render(const Shader& shader, const float deltaTime) const
@@ -63,6 +65,7 @@ void SceneRenderer::UpdateFishPosition(float deltaTime)
 
     fishPosition = glm::vec3(x, 0.0f, z);
 }
+
 void SceneRenderer::RenderWater(const Shader& shader, float deltaTime)
 {
     if (m_aquariumVao == 0) {
@@ -432,4 +435,23 @@ void SceneRenderer::RenderCastle(const Shader& shader, float deltaTime)
     castle = translate(castle, glm::vec3(20.0f, 15.f, -10.0f));
     shader.SetMat4("model", castle);
     m_castle.Draw(shader);
+}
+
+void SceneRenderer::RenderSeaweed(const Shader& shader, float deltaTime)
+{
+    // Prima instanță de alge
+    glm::mat4 Seaweed1 = glm::mat4(1.0);
+    Seaweed1 = glm::translate(Seaweed1, glm::vec3(-1.0f, -1.0f, -1.0f));
+    Seaweed1 = glm::scale(Seaweed1, glm::vec3(0.005f));
+    Seaweed1 = glm::rotate(Seaweed1, glm::radians(-80.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    shader.SetMat4("model", Seaweed1);
+    m_Seaweed.Draw(shader);
+
+    // A doua instanță de alge
+    glm::mat4 Seaweed2 = glm::mat4(1.0);
+    Seaweed2 = glm::translate(Seaweed2, glm::vec3(-0.95f, -1.0f, -1.0f));
+    Seaweed2 = glm::scale(Seaweed2, glm::vec3(0.005f));
+    Seaweed2 = glm::rotate(Seaweed2, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    shader.SetMat4("model", Seaweed2);
+    m_Seaweed.Draw(shader);
 }

@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\Aquarium\Externals\Assimp\include\;..\Aquarium\Externals\STB\;..\Aquarium\Externals\GLM\;..\Aquarium\Externals\GLFW\Include;..\Aquarium\Externals\GLEW\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\S3D-Proiect\Aquarium\Externals\GLFW\Lib;D:\S3D-Proiect\Aquarium\Externals\GLEW\Lib;..\Aquarium\Externals\GLFW\Lib\;..\Aquarium\Externals\Assimp;..\Aquarium\Externals\GLEW\Lib\;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\S3D-Proiect\Aquarium\Externals\Assimp\include;..\Aquarium\Externals\Assimp\include\;..\Aquarium\Externals\STB\;..\Aquarium\Externals\GLM\;..\Aquarium\Externals\GLFW\Include;..\Aquarium\Externals\GLEW\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\S3D-Proiect\Aquarium\Externals\Assimp;D:\S3D-Proiect\Aquarium\Externals\GLFW\Lib;D:\S3D-Proiect\Aquarium\Externals\GLEW\Lib;..\Aquarium\Externals\GLFW\Lib\;..\Aquarium\Externals\Assimp;..\Aquarium\Externals\GLEW\Lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>D:\S3D-Proiect\Aquarium\Externals\STB;D:\S3D-Proiect\Aquarium\Externals\GLM;D:\S3D-Proiect\Aquarium\Externals\GLFW;D:\S3D-Proiect\Aquarium\Externals\GLEW;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>D:\S3D-Proiect\Aquarium\Externals\GLFW\Lib;D:\S3D-Proiect\Aquarium\Externals\GLEW\Lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <IncludePath>D:\S3D-Proiect\Aquarium\Externals\Assimp\include;D:\S3D-Proiect\Aquarium\Externals\STB;D:\S3D-Proiect\Aquarium\Externals\GLM;D:\S3D-Proiect\Aquarium\Externals\GLFW;D:\S3D-Proiect\Aquarium\Externals\GLEW;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>D:\S3D-Proiect\Aquarium\Externals\Assimp;D:\S3D-Proiect\Aquarium\Externals\GLFW\Lib;D:\S3D-Proiect\Aquarium\Externals\GLEW\Lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
