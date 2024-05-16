@@ -26,7 +26,7 @@ SceneRenderer::SceneRenderer(const string& projectPath) :m_textures{ projectPath
     m_redCoral = { m_projectPath + "\\Models\\Red_Coral\\10010_Coral_v1_L3.obj",false,false };
     m_btFish = { m_projectPath + "\\Models\\BlueTang_Fish\\13006_Blue_Tang_v1_l3.obj",false,false };
     m_cat = { m_projectPath + "\\Models\\Cat\\12221_Cat_v1_l3.obj",false,false };
-    m_Seaweed = { m_projectPath + "\\Models\\Seaweed\\2301153_seaweedList.obj",false,false };
+    m_Seaweed = { m_projectPath + "\\Models\\Seaweed\\uploads_files_2301153_seaweedList.obj",false,false };
 }
 
 void SceneRenderer::Init()
@@ -441,7 +441,7 @@ void SceneRenderer::RenderSeaweed(const Shader& shader, float deltaTime)
 {
     // Prima instanță de alge
     glm::mat4 Seaweed1 = glm::mat4(1.0);
-    Seaweed1 = glm::translate(Seaweed1, glm::vec3(-1.0f, -1.0f, -1.0f));
+    Seaweed1 = glm::translate(Seaweed1, glm::vec3(0.35f, -0.48f, 0.0f));
     Seaweed1 = glm::scale(Seaweed1, glm::vec3(0.005f));
     Seaweed1 = glm::rotate(Seaweed1, glm::radians(-80.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     shader.SetMat4("model", Seaweed1);
@@ -449,7 +449,7 @@ void SceneRenderer::RenderSeaweed(const Shader& shader, float deltaTime)
 
     // A doua instanță de alge
     glm::mat4 Seaweed2 = glm::mat4(1.0);
-    Seaweed2 = glm::translate(Seaweed2, glm::vec3(-0.95f, -1.0f, -1.0f));
+    Seaweed2 = glm::translate(Seaweed2, glm::vec3(0.45f, -0.48f, 0.0f));
     Seaweed2 = glm::scale(Seaweed2, glm::vec3(0.005f));
     Seaweed2 = glm::rotate(Seaweed2, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     shader.SetMat4("model", Seaweed2);
