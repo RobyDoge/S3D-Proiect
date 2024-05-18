@@ -23,10 +23,11 @@ SceneRenderer::SceneRenderer(const string& projectPath) :m_textures{ projectPath
     m_models.insert({"castle", { m_projectPath + "\\Models\\Aquarium_Castle\\13020_Aquarium_Castle_v1_L1.obj",false,false }});
     m_models.insert({ "skull",{ m_projectPath + "\\Models\\Aquarium_Skull\\13022_Aquarium_Skull_v1_L1.obj",false,false } });
     m_models.insert({ "blueGreenFish", { m_projectPath + "\\Models\\BlueGreen_Fish\\13007_Blue-Green_Reef_Chromis_v2_l3.obj",false,false } });
-    m_models.insert({ "redFish", { m_projectPath + "\\Models\\Red_Coral\\10010_Coral_v1_L3.obj",false,false } });
+    m_models.insert({ "redCoral", { m_projectPath + "\\Models\\Red_Coral\\10010_Coral_v1_L3.obj",false,false } });
     m_models.insert({ "blueFish", { m_projectPath + "\\Models\\BlueTang_Fish\\13006_Blue_Tang_v1_l3.obj",false,false } });
     m_models.insert({ "cat", { m_projectPath + "\\Models\\Cat\\12221_Cat_v1_l3.obj",false,false } });
-    m_models.insert({ "seaweed", { m_projectPath + "\\Models\\Seaweed\\uploads_files_2301153_seaweedList.obj",false,false } });
+    m_models.insert({ "daffodilModel", { m_projectPath + "\\Models\\Daffodil\\12977_Daffodil_flower_v1_l2.obj",false,false } });
+    m_models.insert({ "bush", { m_projectPath + "\\Models\\Bush\\bush1.obj",false,false } });
 }
 
 void SceneRenderer::Init()
@@ -43,7 +44,8 @@ void SceneRenderer::Init()
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderRedCoral(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderBlueTangFish(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderCat(shader, deltaTime); });
-    m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderSeaweed(shader, deltaTime); });
+    m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderDaffodils(shader, deltaTime); });
+    m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderBush(shader, deltaTime); });
 }
 
 void SceneRenderer::Render(const Shader& shader, const float deltaTime) const
@@ -373,7 +375,7 @@ void SceneRenderer::RenderRedCoral(const Shader& shader, float deltaTime)
     redCoral1 = glm::scale(redCoral1, glm::vec3(0.005f)); 
     redCoral1 = glm::rotate(redCoral1, glm::radians(-80.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
     shader.SetMat4("model", redCoral1);
-    m_models.at("redFish").Draw(shader);
+    m_models.at("redCoral").Draw(shader);
 
     // A doua instanță de coral
     glm::mat4 redCoral2 = glm::mat4(1.0);
@@ -381,7 +383,7 @@ void SceneRenderer::RenderRedCoral(const Shader& shader, float deltaTime)
     redCoral2 = glm::scale(redCoral2, glm::vec3(0.005f));
     redCoral2 = glm::rotate(redCoral2, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
     shader.SetMat4("model", redCoral2);
-    m_models.at("redFish").Draw(shader);
+    m_models.at("redCoral").Draw(shader);
 
 }
 
@@ -442,22 +444,27 @@ void SceneRenderer::RenderCastle(const Shader& shader, float deltaTime)
     m_models.at("castle").Draw(shader);
 }
 
-void SceneRenderer::RenderSeaweed(const Shader& shader, float deltaTime)
+void SceneRenderer::RenderDaffodils(const Shader& shader, float deltaTime)
 {
-    // Prima instanță de alge
-    glm::mat4 Seaweed1 = glm::mat4(1.0);
-    Seaweed1 = glm::translate(Seaweed1, glm::vec3(0.35f, -0.48f, 0.0f));
-    Seaweed1 = glm::scale(Seaweed1, glm::vec3(0.005f));
-    Seaweed1 = glm::rotate(Seaweed1, glm::radians(-80.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    shader.SetMat4("model", Seaweed1);
-    m_models.at("seaweed").Draw(shader);
+    for (int i = 0; i < 5; ++i) {
+        glm::mat4 daffodil = glm::mat4(1.0);
+        float x = -1.0f + i * 0.2f; 
+        float y = -0.48f; 
+        float z = -1.3f; 
+        daffodil = glm::translate(daffodil, glm::vec3(x, y, z));
+        daffodil = glm::scale(daffodil, glm::vec3(0.05f));
+        daffodil = glm::rotate(daffodil, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        shader.SetMat4("model", daffodil);
+        m_models.at("daffodilModel").Draw(shader);
+    }
+}
 
-    // A doua instanță de alge
-    glm::mat4 Seaweed2 = glm::mat4(1.0);
-    Seaweed2 = glm::translate(Seaweed2, glm::vec3(0.45f, -0.48f, 0.0f));
-    Seaweed2 = glm::scale(Seaweed2, glm::vec3(0.005f));
-    Seaweed2 = glm::rotate(Seaweed2, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    shader.SetMat4("model", Seaweed2);
-    m_models.at("seaweed").Draw(shader);
+void SceneRenderer::RenderBush(const Shader& shader, float deltaTime)
+{
+    glm::mat4 bushModel = scale(glm::mat4(1.0), glm::vec3(5.0f));
+    bushModel = rotate(bushModel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    bushModel = translate(bushModel, glm::vec3(40.0f, 20.f, -20.0f));
+    shader.SetMat4("model", bushModel);
+    m_models.at("bush").Draw(shader);
 
 }
