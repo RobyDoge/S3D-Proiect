@@ -18,6 +18,7 @@ public:
 
 private:
     void CreateProjectPath(const string& string);
+    void UpdateFishPosition(float deltaTime, glm::mat4& model, float speed);
 
 private:
     void RenderFloor(const Shader& shader, float deltaTime);
@@ -32,7 +33,6 @@ private:
     void RenderRedCoral(const Shader& shader, float deltaTime);
     void RenderBlueTangFish(const Shader& shader, float deltaTime);
     void RenderCat(const Shader& shader, float deltaTime);
-    void UpdateFishPosition(float deltaTime);
     void RenderSeaweed(const Shader& shader, float deltaTime);
 private:
     unsigned int m_ceilingVao{ 0 };
@@ -45,24 +45,12 @@ private:
     unsigned int m_aquariumVbo{ 0 };
     unsigned int m_aquariumFloorVbo{ 0 };
     unsigned int m_aquariumFloorVao{ 0 };
-
+private:
+    float m_fishAngle{ 10000 };
 private:
     std::string m_projectPath;
     std::vector<std::function<void(const Shader& shader, float deltaTime)>> m_renderers;
     Textures m_textures;
     std::unordered_map<std::string,Model> m_models;
-    float fishRadius = 0.5f; 
-    float fishSpeed = 0.05f; 
-    float fishAngle = 0.0f; 
-    glm::vec3 fishPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-    Model m_fishModel;
-    Model m_aquariumModel;
-    Model m_coralFishModel;
-    Model m_skull;
-    Model m_castle;
-    Model m_bgFish;
-    Model m_redCoral;
-    Model m_btFish;
-    Model m_cat;
-    Model m_Seaweed;
+     
 };

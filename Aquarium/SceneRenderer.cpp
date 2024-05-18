@@ -18,15 +18,15 @@ SceneRenderer::SceneRenderer(const string& projectPath) :m_textures{ projectPath
     m_textures.AddTexture("AFloor", "AquariumFloor.jpg");
     CreateProjectPath(projectPath);
 
-    m_fishModel= Model(m_projectPath + "\\Models\\Fish\\12265_Fish_v1_L2.obj", false, false);
-    m_coralFishModel = Model(m_projectPath + "\\Models\\Coral_Beauty_Angelfish\\13009_Coral_Beauty_Angelfish_v1_l3.obj", false, false);
-    m_castle = { m_projectPath + "\\Models\\Aquarium_Castle\\13020_Aquarium_Castle_v1_L1.obj",false,false };
-    m_skull = { m_projectPath + "\\Models\\Aquarium_Skull\\13022_Aquarium_Skull_v1_L1.obj",false,false };
-    m_bgFish = { m_projectPath + "\\Models\\BlueGreen_Fish\\13007_Blue-Green_Reef_Chromis_v2_l3.obj",false,false };
-    m_redCoral = { m_projectPath + "\\Models\\Red_Coral\\10010_Coral_v1_L3.obj",false,false };
-    m_btFish = { m_projectPath + "\\Models\\BlueTang_Fish\\13006_Blue_Tang_v1_l3.obj",false,false };
-    m_cat = { m_projectPath + "\\Models\\Cat\\12221_Cat_v1_l3.obj",false,false };
-    m_Seaweed = { m_projectPath + "\\Models\\Seaweed\\uploads_files_2301153_seaweedList.obj",false,false };
+    m_models.insert({ "clownFish", { m_projectPath + "\\Models\\Fish\\12265_Fish_v1_L2.obj", false, false } });
+    m_models.insert({ "coralFish",{m_projectPath + "\\Models\\Coral_Beauty_Angelfish\\13009_Coral_Beauty_Angelfish_v1_l3.obj", false, false} });
+    m_models.insert({"castle", { m_projectPath + "\\Models\\Aquarium_Castle\\13020_Aquarium_Castle_v1_L1.obj",false,false }});
+    m_models.insert({ "skull",{ m_projectPath + "\\Models\\Aquarium_Skull\\13022_Aquarium_Skull_v1_L1.obj",false,false } });
+    m_models.insert({ "blueGreenFish", { m_projectPath + "\\Models\\BlueGreen_Fish\\13007_Blue-Green_Reef_Chromis_v2_l3.obj",false,false } });
+    m_models.insert({ "redFish", { m_projectPath + "\\Models\\Red_Coral\\10010_Coral_v1_L3.obj",false,false } });
+    m_models.insert({ "blueFish", { m_projectPath + "\\Models\\BlueTang_Fish\\13006_Blue_Tang_v1_l3.obj",false,false } });
+    m_models.insert({ "cat", { m_projectPath + "\\Models\\Cat\\12221_Cat_v1_l3.obj",false,false } });
+    m_models.insert({ "seaweed", { m_projectPath + "\\Models\\Seaweed\\uploads_files_2301153_seaweedList.obj",false,false } });
 }
 
 void SceneRenderer::Init()
@@ -56,15 +56,16 @@ void SceneRenderer::Render(const Shader& shader, const float deltaTime) const
     }
 }
 
-void SceneRenderer::UpdateFishPosition(float deltaTime)
-{
-    fishAngle -= fishSpeed * deltaTime;
-
-    float x = fishRadius * cos(fishAngle);
-    float z = fishRadius * sin(fishAngle);
-
-    fishPosition = glm::vec3(x, 0.0f, z);
-}
+//void SceneRenderer::UpdateFishPosition(const float deltaTime,glm::mat4& model, float speed)
+//{
+//    float angle -= speed * deltaTime;
+//
+//
+//    float x = fishRadius * cos(fishAngle);
+//    float z = fishRadius * sin(fishAngle);
+//
+//    fishPosition = glm::vec3(x, 0.0f, z);
+//}
 
 void SceneRenderer::RenderWater(const Shader& shader, float deltaTime)
 {
@@ -338,7 +339,7 @@ void SceneRenderer::RenderFish(const Shader& shader, float deltaTime)
     fishModel = glm::rotate(fishModel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
     shader.SetMat4("model", fishModel);
-    m_fishModel.Draw(shader);
+    m_models.at("clownFish").Draw(shader);
 }
 
 void SceneRenderer::RenderCoralFish(const Shader& shader, float deltaTime)
@@ -349,18 +350,18 @@ void SceneRenderer::RenderCoralFish(const Shader& shader, float deltaTime)
     coralFishModel = glm::rotate(coralFishModel, glm::radians(-80.0f), glm::vec3(1.0f, 0.0f, 0.0f));  
 
     shader.SetMat4("model", coralFishModel);
-    m_coralFishModel.Draw(shader);
+    m_models.at("coralFish").Draw(shader);
 }
 
 void SceneRenderer::RenderSkull(const Shader& shader, float deltaTime)
 {
     glm::mat4 skullModel = glm::mat4(1.0);
     skullModel = glm::translate(skullModel, glm::vec3(-0.5f, -0.49f, 0.0f));
-    skullModel = glm::scale(skullModel, glm::vec3(0.05f));
+    skullModel = glm::scale(skullModel, glm::vec3(0.025f));
     skullModel = glm::rotate(skullModel, glm::radians(-80.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
     shader.SetMat4("model", skullModel);
-    m_skull.Draw(shader);
+    m_models.at("skull").Draw(shader);
 }
 
 void SceneRenderer::RenderBlueGreenFish(const Shader& shader, float deltaTime)
@@ -371,7 +372,7 @@ void SceneRenderer::RenderBlueGreenFish(const Shader& shader, float deltaTime)
     bgFish = glm::rotate(bgFish, glm::radians(-80.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
     shader.SetMat4("model", bgFish);
-    m_bgFish.Draw(shader);
+    m_models.at("blueGreenFish").Draw(shader);
 }
 
 void SceneRenderer::RenderRedCoral(const Shader& shader, float deltaTime)
@@ -382,7 +383,7 @@ void SceneRenderer::RenderRedCoral(const Shader& shader, float deltaTime)
     redCoral1 = glm::scale(redCoral1, glm::vec3(0.005f)); 
     redCoral1 = glm::rotate(redCoral1, glm::radians(-80.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
     shader.SetMat4("model", redCoral1);
-    m_redCoral.Draw(shader);
+    m_models.at("redFish").Draw(shader);
 
     // A doua instanță de coral
     glm::mat4 redCoral2 = glm::mat4(1.0);
@@ -390,36 +391,43 @@ void SceneRenderer::RenderRedCoral(const Shader& shader, float deltaTime)
     redCoral2 = glm::scale(redCoral2, glm::vec3(0.005f));
     redCoral2 = glm::rotate(redCoral2, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
     shader.SetMat4("model", redCoral2);
-    m_redCoral.Draw(shader);
+    m_models.at("redFish").Draw(shader);
+
 }
 
 void SceneRenderer::RenderBlueTangFish(const Shader& shader, float deltaTime)
 {
-    UpdateFishPosition(deltaTime);
-
     glm::mat4 btFishModel = glm::mat4(1.0);
-    btFishModel = glm::translate(btFishModel, fishPosition); // Poziția actualizată a peștelui
     btFishModel = glm::scale(btFishModel, glm::vec3(0.03f));
-    btFishModel = glm::rotate(btFishModel, glm::radians(-90.0f), glm::vec3(0.5f, 0.5f, 0.5f));
+    btFishModel = glm::rotate(btFishModel, glm::radians(-90.0f), glm::vec3(1.f, 0.f, 0.f));
+
+    constexpr float fishRadius = 36;
+    constexpr float fishSpeed = .5f;
+    m_fishAngle -= fishSpeed * deltaTime;
+    const float x = fishRadius * cos(m_fishAngle);
+    const float z = fishRadius * sin(m_fishAngle);
+
+    btFishModel = glm::translate(btFishModel, glm::vec3(x, z, 0));
+    btFishModel = glm::rotate(btFishModel, m_fishAngle, glm::vec3(0.f, 0.f, 1.f));
 
     shader.SetMat4("model", btFishModel);
-    m_btFish.Draw(shader);
+    m_models.at("blueFish").Draw(shader);
 }
 
 void SceneRenderer::RenderCat(const Shader& shader, float deltaTime)
 {
-    glm::mat4 catModel = glm::mat4(1.0f);
+	auto catModel = glm::mat4(1.0f);
 
-    catModel = glm::translate(catModel, glm::vec3(2.2f, -0.49f, 0.0f));
+    catModel = glm::translate(catModel, glm::vec3(2.f, -0.49f, 0.0f));
 
-    catModel = glm::rotate(catModel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    catModel = glm::rotate(catModel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, .0f));
+    catModel = glm::rotate(catModel, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotate the model to face its new right
 
-    catModel = glm::scale(catModel, glm::vec3(0.03f));
+    catModel = glm::scale(catModel, glm::vec3(0.017f));
 
     shader.SetMat4("model", catModel);
-    m_cat.Draw(shader);
+    m_models.at("cat").Draw(shader);
 }
-
 
 void SceneRenderer::RenderCastle(const Shader& shader, float deltaTime)
 {
@@ -427,14 +435,14 @@ void SceneRenderer::RenderCastle(const Shader& shader, float deltaTime)
     castle = rotate(castle, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     castle = translate(castle, glm::vec3(40.0f, 20.f, -20.0f));
     shader.SetMat4("model", castle);
-    m_castle.Draw(shader);
+    m_models.at("castle").Draw(shader);
 
     castle = scale(glm::mat4(1.0), glm::vec3(.05f));
     castle = rotate(castle, glm::radians(-90.0f), glm::vec3(1.0f, 0.f, 0.0f));
     castle = rotate(castle, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     castle = translate(castle, glm::vec3(20.0f, 15.f, -10.0f));
     shader.SetMat4("model", castle);
-    m_castle.Draw(shader);
+    m_models.at("castle").Draw(shader);
 }
 
 void SceneRenderer::RenderSeaweed(const Shader& shader, float deltaTime)
@@ -445,7 +453,7 @@ void SceneRenderer::RenderSeaweed(const Shader& shader, float deltaTime)
     Seaweed1 = glm::scale(Seaweed1, glm::vec3(0.005f));
     Seaweed1 = glm::rotate(Seaweed1, glm::radians(-80.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     shader.SetMat4("model", Seaweed1);
-    m_Seaweed.Draw(shader);
+    m_models.at("seaweed").Draw(shader);
 
     // A doua instanță de alge
     glm::mat4 Seaweed2 = glm::mat4(1.0);
@@ -453,5 +461,6 @@ void SceneRenderer::RenderSeaweed(const Shader& shader, float deltaTime)
     Seaweed2 = glm::scale(Seaweed2, glm::vec3(0.005f));
     Seaweed2 = glm::rotate(Seaweed2, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     shader.SetMat4("model", Seaweed2);
-    m_Seaweed.Draw(shader);
+    m_models.at("seaweed").Draw(shader);
+
 }
