@@ -56,16 +56,6 @@ void SceneRenderer::Render(const Shader& shader, const float deltaTime) const
     }
 }
 
-//void SceneRenderer::UpdateFishPosition(const float deltaTime,glm::mat4& model, float speed)
-//{
-//    float angle -= speed * deltaTime;
-//
-//
-//    float x = fishRadius * cos(fishAngle);
-//    float z = fishRadius * sin(fishAngle);
-//
-//    fishPosition = glm::vec3(x, 0.0f, z);
-//}
 
 void SceneRenderer::RenderWater(const Shader& shader, float deltaTime)
 {
@@ -402,7 +392,7 @@ void SceneRenderer::RenderBlueTangFish(const Shader& shader, float deltaTime)
     btFishModel = glm::rotate(btFishModel, glm::radians(-90.0f), glm::vec3(1.f, 0.f, 0.f));
 
     constexpr float fishRadius = 36;
-    constexpr float fishSpeed = .5f;
+    constexpr float fishSpeed = .2f;
     m_fishAngle -= fishSpeed * deltaTime;
     const float x = fishRadius * cos(m_fishAngle);
     const float z = fishRadius * sin(m_fishAngle);
@@ -413,15 +403,22 @@ void SceneRenderer::RenderBlueTangFish(const Shader& shader, float deltaTime)
     shader.SetMat4("model", btFishModel);
     m_models.at("blueFish").Draw(shader);
 }
-
 void SceneRenderer::RenderCat(const Shader& shader, float deltaTime)
 {
-	auto catModel = glm::mat4(1.0f);
+    auto catModel = glm::mat4(1.0f);
 
-    catModel = glm::translate(catModel, glm::vec3(2.f, -0.49f, 0.0f));
+    constexpr float catRadius = 2.5f; 
+    constexpr float catSpeed = 0.1f;
+    m_catAngle += catSpeed * deltaTime;
 
-    catModel = glm::rotate(catModel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, .0f));
-    catModel = glm::rotate(catModel, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotate the model to face its new right
+    const float x = catRadius * cos(m_catAngle);
+    const float z = catRadius * sin(m_catAngle);
+    catModel = glm::translate(catModel, glm::vec3(x, -0.49f, z));
+
+    float angleToCenter = atan2(0.0f - x, 0.0f - z);
+    catModel = glm::rotate(catModel, angleToCenter + glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    catModel = glm::rotate(catModel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
     catModel = glm::scale(catModel, glm::vec3(0.017f));
 

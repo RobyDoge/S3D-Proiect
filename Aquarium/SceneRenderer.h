@@ -47,6 +47,7 @@ private:
     unsigned int m_aquariumFloorVao{ 0 };
 private:
     float m_fishAngle{ 10000 };
+    float m_catAngle{ 0.0f };
 private:
     std::string m_projectPath;
     std::vector<std::function<void(const Shader& shader, float deltaTime)>> m_renderers;
