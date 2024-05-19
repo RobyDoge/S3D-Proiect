@@ -68,8 +68,14 @@ void Window::ProcessInput(const float deltaTime) const
         m_camera->ProcessKeyboard(Camera::Up, deltaTime);
     if (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         m_camera->ProcessKeyboard(Camera::Down, deltaTime);
+    if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
+        m_isLightOn = !m_isLightOn;
+    
+    
+}
 
-    
-    
+bool Window::GetLightStatus()
+{
+    return m_isLightOn;
 }
 

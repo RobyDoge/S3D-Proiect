@@ -12,6 +12,7 @@ public:
 	GLFWwindow* GetWindow() const;
 	Camera* GetCamera() const;
 	void ProcessInput(const float deltaTime) const;
+	static bool GetLightStatus();
 
 private:
 	inline static void FrameBuffer_Size_Callback(GLFWwindow* win, const int width, const int height)
@@ -39,4 +40,5 @@ private:
 	inline static int m_movingSegment{ 0 };
 	GLFWwindow* m_window;
 	Camera* m_camera;
+	inline static bool m_isLightOn{true};
 };

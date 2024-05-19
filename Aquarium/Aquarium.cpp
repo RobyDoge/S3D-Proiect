@@ -28,6 +28,7 @@ int main(int argc, char** argv)
     const Shader shadowMappingShader("Shaders\\ShadowMapping.vs", "Shaders\\ShadowMapping.fs");
     const Shader shadowMappingDepthShader("Shaders\\ShadowMappingDepth.vs", "Shaders\\ShadowMappingDepth.fs");
     const Shader waterShader("Shaders\\WaterShader.vs", "Shaders\\WaterShader.fs");
+    const Shader darkShader("Shaders\\darkShader.vs", "Shaders\\darkShader.fs");
 
     // create a framebuffer object + textures
     SceneRenderer scene_renderer = { argv[0] };
@@ -67,6 +68,10 @@ int main(int argc, char** argv)
     shadowMappingShader.Use();
     shadowMappingShader.SetInt("diffuseTexture", 0);
     shadowMappingShader.SetInt("shadowMap", 1);
+
+    darkShader.Use();
+    darkShader.SetInt("diffuseTexture", 0);
+    darkShader.SetInt("shadowMap", 1);
 
     // lighting info
     // -------------
@@ -117,25 +122,52 @@ int main(int argc, char** argv)
         // 2. render scene as normal using the generated depth/shadow map 
         glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        shadowMappingShader.Use();
-        glm::mat4 projection = camera->GetProjectionMatrix();
-        glm::mat4 view = camera->GetViewMatrix();
-        shadowMappingShader.SetMat4("projection", projection);
-        shadowMappingShader.SetMat4("view", view);
-        // set light uniforms
-        shadowMappingShader.SetVec3("viewPos", camera->GetPosition());
-        shadowMappingShader.SetVec3("lightPos", lightPos);
-        shadowMappingShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, depthMap);
-        glDisable(GL_CULL_FACE);
-        scene_renderer.Render(shadowMappingShader, deltaTime);
 
+        if(window->GetLightStatus())
+        {
+	        shadowMappingShader.Use();
+        	glm::mat4 projection = camera->GetProjectionMatrix();
+        	glm::mat4 view = camera->GetViewMatrix();
+        	shadowMappingShader.SetMat4("projection", projection);
+        	shadowMappingShader.SetMat4("view", view);
+        	// set light uniforms
+        	shadowMappingShader.SetVec3("viewPos", camera->GetPosition());
+        	shadowMappingShader.SetVec3("lightPos", lightPos);
+        	shadowMappingShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
+        	glActiveTexture(GL_TEXTURE1);
+        	glBindTexture(GL_TEXTURE_2D, depthMap);
+        	glDisable(GL_CULL_FACE);
+        	scene_renderer.Render(shadowMappingShader, deltaTime);
 
-        waterShader.Use();
-        waterShader.SetMat4("projection", projection);
-        waterShader.SetMat4("view", view);
-        scene_renderer.RenderWater(waterShader, deltaTime);
+            waterShader.Use();
+            waterShader.SetMat4("projection", projection);
+            waterShader.SetMat4("view", view);
+            scene_renderer.RenderWater(waterShader, deltaTime);
+        }
+        else
+        {
+        	darkShader.Use();
+			glm::mat4 projection = camera->GetProjectionMatrix();
+			glm::mat4 view = camera->GetViewMatrix();
+			darkShader.SetMat4("projection", projection);
+			darkShader.SetMat4("view", view);
+			// set light uniforms
+			darkShader.SetVec3("viewPos", camera->GetPosition());
+			darkShader.SetVec3("lightPos", lightPos);
+			darkShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, depthMap);
+			glDisable(GL_CULL_FACE);
+			scene_renderer.Render(shadowMappingShader, deltaTime);
+
+			waterShader.Use();
+			waterShader.SetMat4("projection", projection);
+			waterShader.SetMat4("view", view);
+			scene_renderer.RenderWater(waterShader, deltaTime);
+	        
+        }
+
+        
 
         glfwSwapBuffers(window->GetWindow());
         glfwPollEvents();
