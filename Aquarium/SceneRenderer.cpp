@@ -28,6 +28,8 @@ SceneRenderer::SceneRenderer(const string& projectPath) :m_textures{ projectPath
     m_models.insert({ "cat", { m_projectPath + "\\Models\\Cat\\12221_Cat_v1_l3.obj",false,false } });
     m_models.insert({ "daffodilModel", { m_projectPath + "\\Models\\Daffodil\\12977_Daffodil_flower_v1_l2.obj",false,false } });
     m_models.insert({ "log", {m_projectPath + "\\Models\\WaterLog\\13021_Aquarium_Log_v1_L3.obj",false,false} });
+    m_models.insert({ "treasure", {m_projectPath + "\\Models\\Treasure_Chest\\13019_aquarium_treasure_chest_v1_L2.obj",false,false} });
+
 }
 
 void SceneRenderer::Init()
@@ -46,6 +48,7 @@ void SceneRenderer::Init()
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderCat(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderDaffodils(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderLog(shader, deltaTime); });
+    m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderTreasure(shader, deltaTime); });
 }
 
 void SceneRenderer::Render(const Shader& shader, const float deltaTime) const
@@ -505,5 +508,16 @@ void SceneRenderer::RenderLog(const Shader& shader, float deltaTime)
 
 	shader.SetMat4("model", log);
 	m_models.at("log").Draw(shader);
+}
+void SceneRenderer::RenderTreasure(const Shader& shader, float deltaTime)
+{
+    glm::mat4 treasure = glm::mat4(1.0);
+    treasure = glm::translate(treasure, glm::vec3(-0.5f, -0.49f, 1.0f)); 
+    treasure = glm::scale(treasure, glm::vec3(0.025f));
+    treasure = glm::rotate(treasure, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    treasure = glm::rotate(treasure, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+    shader.SetMat4("model", treasure);
+    m_models.at("treasure").Draw(shader);
 }
 

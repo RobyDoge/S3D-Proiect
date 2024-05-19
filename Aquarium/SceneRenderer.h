@@ -35,6 +35,7 @@ private:
     void RenderCat(const Shader& shader, float deltaTime);
     void RenderDaffodils(const Shader& shader, float deltaTime);
     void RenderLog(const Shader& shader, float deltaTime);
+    void RenderTreasure(const Shader& shader, float deltaTime);
 private:
     unsigned int m_ceilingVao{ 0 };
     unsigned int m_ceilingVbo{ 0 };
