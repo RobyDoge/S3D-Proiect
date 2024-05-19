@@ -337,7 +337,19 @@ void SceneRenderer::RenderCoralFish(const Shader& shader, float deltaTime)
     glm::mat4 coralFishModel = glm::mat4(1.0);
     coralFishModel = glm::translate(coralFishModel, glm::vec3(1.0f, 0.0f, 0.0f));  
     coralFishModel = glm::scale(coralFishModel, glm::vec3(0.2f)); 
-    coralFishModel = glm::rotate(coralFishModel, glm::radians(-80.0f), glm::vec3(1.0f, 0.0f, 0.0f));  
+    coralFishModel = glm::rotate(coralFishModel, glm::radians(-80.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
+
+    constexpr float fishRadius = 2.0f; 
+    constexpr float fishSpeed = 0.1f;
+    m_fishAngle += fishSpeed * deltaTime;
+    const float x = fishRadius * cos(m_fishAngle);
+    const float z = fishRadius * sin(m_fishAngle);
+
+    coralFishModel = glm::rotate(coralFishModel, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    coralFishModel = glm::translate(coralFishModel, glm::vec3(x, z, 0.0f));
+    coralFishModel = glm::scale(coralFishModel, glm::vec3(0.2f));
+    coralFishModel = glm::rotate(coralFishModel, m_fishAngle, glm::vec3(0.0f, 0.0f, 1.0f));
+    coralFishModel = glm::rotate(coralFishModel, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
     shader.SetMat4("model", coralFishModel);
     m_models.at("coralFish").Draw(shader);
