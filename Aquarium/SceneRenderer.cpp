@@ -458,7 +458,7 @@ void SceneRenderer::RenderCat(const Shader& shader, float deltaTime)
 
     catModel = glm::rotate(catModel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
-    catModel = glm::scale(catModel, glm::vec3(0.017f));
+    catModel = glm::scale(catModel, glm::vec3(0.034f));
 
     shader.SetMat4("model", catModel);
     m_models.at("cat").Draw(shader);
