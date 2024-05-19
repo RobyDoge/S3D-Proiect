@@ -384,9 +384,18 @@ void SceneRenderer::RenderSkull(const Shader& shader, float deltaTime)
 void SceneRenderer::RenderBlueGreenFish(const Shader& shader, float deltaTime)
 {
     glm::mat4 bgFish = glm::mat4(1.0);
-    bgFish = glm::translate(bgFish, glm::vec3(1.0f, 0.2f, 0.0f)); 
-    bgFish = glm::scale(bgFish, glm::vec3(0.15f));
+    /*bgFish = glm::translate(bgFish, glm::vec3(1.0f, 0.2f, 0.0f)); */
+    bgFish = glm::scale(bgFish, glm::vec3(0.1f));
     bgFish = glm::rotate(bgFish, glm::radians(-80.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+    constexpr float fishRadius = 6;
+    constexpr float fishSpeed = .1f;
+    m_fishAngle -= fishSpeed * deltaTime;
+    const float x = fishRadius * cos(m_fishAngle);
+    const float z = fishRadius * sin(m_fishAngle);
+
+    bgFish = glm::translate(bgFish, glm::vec3(x, z, 0));
+    bgFish = glm::rotate(bgFish, m_fishAngle, glm::vec3(0.f, 0.f, 1.f));
 
     shader.SetMat4("model", bgFish);
     m_models.at("blueGreenFish").Draw(shader);
