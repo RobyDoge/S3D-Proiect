@@ -34,7 +34,6 @@ private:
     void RenderBlueTangFish(const Shader& shader, float deltaTime);
     void RenderCat(const Shader& shader, float deltaTime);
     void RenderDaffodils(const Shader& shader, float deltaTime);
-    void RenderBush(const Shader& shader, float deltaTime);
 
 private:
     unsigned int m_ceilingVao{ 0 };

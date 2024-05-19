@@ -27,7 +27,6 @@ SceneRenderer::SceneRenderer(const string& projectPath) :m_textures{ projectPath
     m_models.insert({ "blueFish", { m_projectPath + "\\Models\\BlueTang_Fish\\13006_Blue_Tang_v1_l3.obj",false,false } });
     m_models.insert({ "cat", { m_projectPath + "\\Models\\Cat\\12221_Cat_v1_l3.obj",false,false } });
     m_models.insert({ "daffodilModel", { m_projectPath + "\\Models\\Daffodil\\12977_Daffodil_flower_v1_l2.obj",false,false } });
-    m_models.insert({ "bush", { m_projectPath + "\\Models\\Bush\\bush1.obj",false,false } });
 }
 
 void SceneRenderer::Init()
@@ -45,7 +44,6 @@ void SceneRenderer::Init()
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderBlueTangFish(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderCat(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderDaffodils(shader, deltaTime); });
-    m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderBush(shader, deltaTime); });
 }
 
 void SceneRenderer::Render(const Shader& shader, const float deltaTime) const
@@ -459,12 +457,3 @@ void SceneRenderer::RenderDaffodils(const Shader& shader, float deltaTime)
     }
 }
 
-void SceneRenderer::RenderBush(const Shader& shader, float deltaTime)
-{
-    glm::mat4 bushModel = scale(glm::mat4(1.0), glm::vec3(5.0f));
-    bushModel = rotate(bushModel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    bushModel = translate(bushModel, glm::vec3(40.0f, 20.f, -20.0f));
-    shader.SetMat4("model", bushModel);
-    m_models.at("bush").Draw(shader);
-
-}
