@@ -164,7 +164,7 @@ int main(int argc, char** argv)
 			waterShader.SetMat4("projection", projection);
 			waterShader.SetMat4("view", view);
 			scene_renderer.RenderWater(waterShader, deltaTime);
-	        
+
         }
 
         

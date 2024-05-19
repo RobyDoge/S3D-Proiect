@@ -15,10 +15,8 @@ public:
     void Init();
     void Render(const Shader& shader, float deltaTime) const;
     void RenderWater(const Shader& shader, float deltaTime);    
-
 private:
     void CreateProjectPath(const string& string);
-    void UpdateFishPosition(float deltaTime, glm::mat4& model, float speed);
 
 private:
     void RenderFloor(const Shader& shader, float deltaTime);
@@ -38,6 +36,8 @@ private:
     void RenderTreasure(const Shader& shader, float deltaTime);
     void RenderOrangeFish(const Shader& shader, float deltaTime);
     void RenderRainbowFish(const Shader& shader, float deltaTime);
+    void RenderLeaves(const Shader& shader, float deltaTime);
+
 private:
     unsigned int m_ceilingVao{ 0 };
     unsigned int m_ceilingVbo{ 0 };

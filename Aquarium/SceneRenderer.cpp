@@ -30,7 +30,8 @@ SceneRenderer::SceneRenderer(const string& projectPath) :m_textures{ projectPath
     m_models.insert({ "log", {m_projectPath + "\\Models\\WaterLog\\13021_Aquarium_Log_v1_L3.obj",false,false} });
     m_models.insert({ "treasure", {m_projectPath + "\\Models\\Treasure_Chest\\13019_aquarium_treasure_chest_v1_L2.obj",false,false} });
     m_models.insert({ "orangeFish", {m_projectPath + "\\Models\\Orange_Fish\\13012_Orange_Lined_Cardinalfish_v1_l3.obj",false,false} });
-    m_models.insert({ "rainbowFish", {m_projectPath + "\\Models\\Rainbow_Fish\\12999_Boesemani_Rainbow_v1_l2.obj",false,false} });
+    m_models.insert({ "leaves", {m_projectPath + "\\Models\\Leaves\\potted_plant_obj.obj",false,false} });
+	m_models.insert({ "rainbowFish", {m_projectPath + "\\Models\\Rainbow_Fish\\12999_Boesemani_Rainbow_v1_l2.obj",false,false} });
 }
 
 void SceneRenderer::Init()
@@ -52,6 +53,7 @@ void SceneRenderer::Init()
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderTreasure(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderOrangeFish(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderRainbowFish(shader, deltaTime); });
+    m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderLeaves(shader, deltaTime); });
 }
 
 void SceneRenderer::Render(const Shader& shader, const float deltaTime) const
@@ -554,4 +556,30 @@ void SceneRenderer::RenderRainbowFish(const Shader& shader, float deltaTime)
 
     shader.SetMat4("model", orangeFish);
     m_models.at("rainbowFish").Draw(shader);
+}
+
+void SceneRenderer::RenderLeaves(const Shader& shader, float deltaTime)
+{
+	for (float positionX = -1.3f; positionX <= -.5f; positionX += 0.1f)
+		for (float positionZ = -1.3f; positionZ <= -.5f; positionZ += 0.1f)
+		{
+			//creates a plant
+			for (int i = 0; i < 2; ++i)
+			{
+				for (int j = 0; j < 2; ++j)
+				{
+					auto leaf = glm::mat4(1.0);
+					float x = positionX + i * 0.08f; // Decreased the spacing between leaves
+					float z = positionZ + j * 0.08f; // Decreased the spacing between leaves
+					float y = -0.76f;
+
+					leaf = translate(leaf, glm::vec3(x, y, z));
+					leaf = scale(leaf, glm::vec3(0.01f));
+					shader.SetMat4("model", leaf);
+					m_models.at("leaves").Draw(shader);
+				}
+			}
+    }
+
+
 }
