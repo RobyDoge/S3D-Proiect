@@ -30,6 +30,7 @@ SceneRenderer::SceneRenderer(const string& projectPath) :m_textures{ projectPath
     m_models.insert({ "log", {m_projectPath + "\\Models\\WaterLog\\13021_Aquarium_Log_v1_L3.obj",false,false} });
     m_models.insert({ "treasure", {m_projectPath + "\\Models\\Treasure_Chest\\13019_aquarium_treasure_chest_v1_L2.obj",false,false} });
     m_models.insert({ "orangeFish", {m_projectPath + "\\Models\\Orange_Fish\\13012_Orange_Lined_Cardinalfish_v1_l3.obj",false,false} });
+    m_models.insert({ "rainbowFish", {m_projectPath + "\\Models\\Rainbow_Fish\\12999_Boesemani_Rainbow_v1_l2.obj",false,false} });
 }
 
 void SceneRenderer::Init()
@@ -50,6 +51,7 @@ void SceneRenderer::Init()
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderLog(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderTreasure(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderOrangeFish(shader, deltaTime); });
+    m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderRainbowFish(shader, deltaTime); });
 }
 
 void SceneRenderer::Render(const Shader& shader, const float deltaTime) const
@@ -536,4 +538,20 @@ void SceneRenderer::RenderOrangeFish(const Shader& shader, float deltaTime)
 
     shader.SetMat4("model", orangeFish);
     m_models.at("orangeFish").Draw(shader);
+}
+
+void SceneRenderer::RenderRainbowFish(const Shader& shader, float deltaTime)
+{
+    glm::mat4 orangeFish = glm::mat4(1.0);
+    orangeFish = glm::scale(orangeFish, glm::vec3(0.04f));
+
+    orangeFish = glm::rotate(orangeFish, glm::radians(-90.0f), glm::vec3(1.f, 0.f, 0.f));
+
+    const float x = -3.0f;
+    const float y = 4.0f;
+    const float z = 4.0f;
+    orangeFish = glm::translate(orangeFish, glm::vec3(x, y, z));
+
+    shader.SetMat4("model", orangeFish);
+    m_models.at("rainbowFish").Draw(shader);
 }
