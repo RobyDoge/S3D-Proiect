@@ -34,7 +34,7 @@ private:
     void RenderBlueTangFish(const Shader& shader, float deltaTime);
     void RenderCat(const Shader& shader, float deltaTime);
     void RenderDaffodils(const Shader& shader, float deltaTime);
-
+    void RenderLog(const Shader& shader, float deltaTime);
 private:
     unsigned int m_ceilingVao{ 0 };
     unsigned int m_ceilingVbo{ 0 };
@@ -48,6 +48,7 @@ private:
     unsigned int m_aquariumFloorVao{ 0 };
 private:
     float m_fishAngle{ 10000 };
+    float m_fishBlueAngle{ 10000 };
     float m_catAngle{ 0.0f };
 private:
     std::string m_projectPath;

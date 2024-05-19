@@ -90,7 +90,7 @@ int main(int argc, char** argv)
 	    constexpr float near_plane = 1.0f;
 	    constexpr float far_plane = 7.5f;
         lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-        lightView = lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 0.0, 0.0));
+        lightView = lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
         lightSpaceMatrix = lightProjection * lightView;
 
         // render scene from light's point of view

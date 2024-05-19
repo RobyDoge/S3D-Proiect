@@ -27,6 +27,7 @@ SceneRenderer::SceneRenderer(const string& projectPath) :m_textures{ projectPath
     m_models.insert({ "blueFish", { m_projectPath + "\\Models\\BlueTang_Fish\\13006_Blue_Tang_v1_l3.obj",false,false } });
     m_models.insert({ "cat", { m_projectPath + "\\Models\\Cat\\12221_Cat_v1_l3.obj",false,false } });
     m_models.insert({ "daffodilModel", { m_projectPath + "\\Models\\Daffodil\\12977_Daffodil_flower_v1_l2.obj",false,false } });
+    m_models.insert({ "log", {m_projectPath + "\\Models\\WaterLog\\13021_Aquarium_Log_v1_L3.obj",false,false} });
 }
 
 void SceneRenderer::Init()
@@ -44,6 +45,7 @@ void SceneRenderer::Init()
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderBlueTangFish(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderCat(shader, deltaTime); });
     m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderDaffodils(shader, deltaTime); });
+    m_renderers.emplace_back([this](const Shader& shader, const float deltaTime) {RenderLog(shader, deltaTime); });
 }
 
 void SceneRenderer::Render(const Shader& shader, const float deltaTime) const
@@ -384,18 +386,18 @@ void SceneRenderer::RenderSkull(const Shader& shader, float deltaTime)
 void SceneRenderer::RenderBlueGreenFish(const Shader& shader, float deltaTime)
 {
     glm::mat4 bgFish = glm::mat4(1.0);
-    /*bgFish = glm::translate(bgFish, glm::vec3(1.0f, 0.2f, 0.0f)); */
+    
     bgFish = glm::scale(bgFish, glm::vec3(0.1f));
-    bgFish = glm::rotate(bgFish, glm::radians(-80.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    bgFish = glm::rotate(bgFish, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
     constexpr float fishRadius = 6;
-    constexpr float fishSpeed = .1f;
-    m_fishAngle -= fishSpeed * deltaTime;
-    const float x = fishRadius * cos(m_fishAngle);
-    const float z = fishRadius * sin(m_fishAngle);
+    constexpr float fishSpeed = .2f;
+    m_fishBlueAngle -= fishSpeed * deltaTime;
+    const float x = fishRadius * cos(m_fishBlueAngle);
+    const float z = fishRadius * sin(m_fishBlueAngle);
 
-    bgFish = glm::translate(bgFish, glm::vec3(x, z, 0));
-    bgFish = glm::rotate(bgFish, m_fishAngle, glm::vec3(0.f, 0.f, 1.f));
+    bgFish = glm::translate(bgFish, glm::vec3(x,z, 4.8f));
+    bgFish = glm::rotate(bgFish, m_fishBlueAngle, glm::vec3(0.f, 0.f, 1.f));
 
     shader.SetMat4("model", bgFish);
     m_models.at("blueGreenFish").Draw(shader);
@@ -427,7 +429,7 @@ void SceneRenderer::RenderBlueTangFish(const Shader& shader, float deltaTime)
     btFishModel = glm::scale(btFishModel, glm::vec3(0.03f));
     btFishModel = glm::rotate(btFishModel, glm::radians(-90.0f), glm::vec3(1.f, 0.f, 0.f));
 
-    constexpr float fishRadius = 36;
+    constexpr float fishRadius = 20;
     constexpr float fishSpeed = .2f;
     m_fishAngle -= fishSpeed * deltaTime;
     const float x = fishRadius * cos(m_fishAngle);
@@ -491,5 +493,17 @@ void SceneRenderer::RenderDaffodils(const Shader& shader, float deltaTime)
         shader.SetMat4("model", daffodil);
         m_models.at("daffodilModel").Draw(shader);
     }
+}
+
+void SceneRenderer::RenderLog(const Shader& shader, float deltaTime)
+{
+	glm::mat4 log = glm::mat4(1.0);
+	log = glm::translate(log, glm::vec3(1.0f, -0.49f, 1.0f));
+	log = glm::scale(log, glm::vec3(0.025f));
+	log = glm::rotate(log, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    log = glm::rotate(log, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+	shader.SetMat4("model", log);
+	m_models.at("log").Draw(shader);
 }
 

@@ -8,7 +8,6 @@ in VS_OUT{
     vec4 FragPosLightSpace;
 } fs_in;
 
-
 uniform sampler2D diffuseTexture;
 uniform sampler2D shadowMap;
 
@@ -72,12 +71,6 @@ void main()
     float shadow = ShadowCalculation(fs_in.FragPosLightSpace);
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
 
-    vec4 texColor = texture(diffuseTexture, fs_in.TexCoords);
-    if(texColor.a < 0.1)
-        discard;
     
-    
-    FragColor = texColor;
     FragColor = vec4(lighting, 1.0);
-    
 }
