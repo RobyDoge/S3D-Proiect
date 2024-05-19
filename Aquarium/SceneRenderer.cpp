@@ -328,6 +328,21 @@ void SceneRenderer::RenderFish(const Shader& shader, float deltaTime)
     fishModel = glm::scale(fishModel, glm::vec3(0.02f));
     fishModel = glm::rotate(fishModel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
+    constexpr float fishRadius = 10.0f;
+    constexpr float fishSpeed = .3f;
+    m_fishAngle -= fishSpeed * deltaTime;
+    const float x = fishRadius * cos(m_fishAngle);
+    const float z = fishRadius * sin(m_fishAngle);
+
+    fishModel = glm::translate(fishModel, glm::vec3(x, z, 0));
+    fishModel = glm::rotate(fishModel, m_fishAngle, glm::vec3(0.f, 0.f, 1.f));
+    fishModel = glm::rotate(fishModel, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    fishModel = glm::translate(fishModel, glm::vec3(x, z, 0.0f));
+    fishModel = glm::scale(fishModel, glm::vec3(0.2f));
+    fishModel = glm::rotate(fishModel, m_fishAngle, glm::vec3(0.0f, 0.0f, 1.0f));
+    fishModel = glm::rotate(fishModel, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+
     shader.SetMat4("model", fishModel);
     m_models.at("clownFish").Draw(shader);
 }
